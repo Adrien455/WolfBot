@@ -1,6 +1,6 @@
 const { get } = require('./../api');
 const { CLAN_ID } = require('./../config');
-;const { get_quests } = require('./../services/clan');
+const { get_quests } = require('./../services/clan');
 
 async function choose_quest()
 {

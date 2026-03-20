@@ -36,7 +36,7 @@ async function execute(command, player_id)
 async function command_handler(message)
 {
     const args = message.msg.slice(1).trim().split(/ +/);
-    const name = args.shift().toLowerCase();
+    const name = args.shift().toLowerCase();    // may add parser later
     const player_id = message.playerId;
 
     const command = commands.get(name);
