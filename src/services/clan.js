@@ -2,6 +2,7 @@ const { CLAN_ID, OWNER_ID} = require('./../config');
 const { get } = require('./../api');
 
 let VIPS = [];
+let QUESTS = [];
 
 async function set_vips()
 {
@@ -22,4 +23,14 @@ function get_vips()
     return VIPS;
 }
 
-module.exports = { set_vips, get_vips };
+async function set_quests()
+{
+    QUESTS = await get(`clans/${CLAN_ID}/quests/available`);
+}
+
+function get_quests()
+{
+    return QUESTS;
+}
+
+module.exports = { set_vips, get_vips, set_quests, get_quests };

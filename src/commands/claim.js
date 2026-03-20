@@ -11,7 +11,7 @@ module.exports =
 
     async execute()
     {
-        winner = await choose_quest();
+        const winner = await choose_quest();
      
         return await post(`clans/${CLAN_ID}/quests/claim`, { "questId": winner });
     }

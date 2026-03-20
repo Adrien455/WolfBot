@@ -1,21 +1,15 @@
 const { get } = require('./../api');
 const { CLAN_ID } = require('./../config');
+;const { get_quests } = require('./../services/clan');
 
 async function choose_quest()
 {
     const options = await get(`clans/${CLAN_ID}/quests/votes`);
     const votes = options.votes;
 
-    const available_quests = await get(`clans/${CLAN_ID}/quests/available`);
-    const gold_quests = [];
-
-    for(const quest of available_quests)
-    {
-        if(!quest.purchasableWithGems)
-        {
-            gold_quests.push(quest.id);
-        }
-    }
+    const gold_quests = get_quests()
+        .filter(quest => !quest.purchasableWithGems)
+        .map(quest => quest.id);
 
     let max_id = null;
     let max_count = -1;
