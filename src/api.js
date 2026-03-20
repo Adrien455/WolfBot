@@ -16,8 +16,9 @@ async function post(endpoint, body)
     }
     catch (err)
     {
-        console.error("Error:", err.response?.text || err.message);
-        return null;
+        const api_message = err.response?.body?.message ?? "Unknown error";
+
+        return `Error: ${api_message}`;
     }
 }
 
@@ -35,8 +36,9 @@ async function get(endpoint)
     }
     catch (err)
     {
-        console.error("Error:", err.response?.text || err.message);
-        return null;
+        const api_message = err.response?.body?.message ?? "Unknown error";
+
+        return `Error: ${api_message}`;
     }
 }
 

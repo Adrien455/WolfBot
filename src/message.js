@@ -1,8 +1,9 @@
-const { get, post} = require('./requests');
+const { get, post} = require('./api');
+const { CLAN_ID } = require('./config');
 
-async function getLastMessage()
+async function getLastMessages()
 {
-    const endpoint = "clans/f40ab7fa-57d1-4bae-87a4-dfa64097765f/chat";
+    const endpoint = `clans/${CLAN_ID}/chat`;
     const data = await get(endpoint);
 
     if(!data || data.length == 0)
@@ -10,15 +11,15 @@ async function getLastMessage()
         return null;
     }
 
-    return data[0].msg;
+    return data;
 }
 
 async function sendMessage(msg)
 {
-    const endpoint = "clans/f40ab7fa-57d1-4bae-87a4-dfa64097765f/chat";
+    const endpoint = `clans/${CLAN_ID}/chat`;
     const body = { "message": msg };
     const data = await post(endpoint, body);
     return data;
 }
 
-module.exports = { getLastMessage, sendMessage };
+module.exports = { getLastMessages, sendMessage };

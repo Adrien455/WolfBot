@@ -1,27 +1,32 @@
 const sleep = require('./utils');
 const command_handler = require('./event_handler');
-const { getLastMessage } = require('./message');
+const { getLastMessages } = require('./message');
 
 async function run_bot()
 {
-    let last_seen = null;
+    let last_seen_date = new Date();
 
     while(1)
     {
-        const last_message = await getLastMessage();
-        console.log(last_message);
+        const messages = await getLastMessages();
 
-        if (last_message && last_message !== last_seen)
+        for(let i = 29; i >= 0; i--)
         {
-            last_seen = last_message;
+            const message = messages[i];
+            const msg_date = new Date(message.date);
 
-            if (last_message.startsWith("!"))
+            if (msg_date > last_seen_date)
             {
-                await command_handler(last_message.slice(1));
+                last_seen_date = msg_date;
+                
+                if (message.msg.startsWith("!"))
+                {
+                    await command_handler(message.msg.slice(1));
+                }
             }
         }
 
-        await sleep(5000);     
+        await sleep(2000);
     }
 }
 
