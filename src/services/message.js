@@ -1,5 +1,5 @@
-const { get, post} = require('./api');
-const { CLAN_ID } = require('./config');
+const { get, post} = require('./../api');
+const { CLAN_ID } = require('./../config');
 
 async function getLastMessages()
 {

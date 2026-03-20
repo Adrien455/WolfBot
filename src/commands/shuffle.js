@@ -6,7 +6,7 @@ module.exports =
     name: "shuffle",
     method: "post",
     description: "Shuffle quests.",
-    strict: false,
+    strict: true,
 
     async execute()
     {

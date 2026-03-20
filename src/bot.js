@@ -1,6 +1,6 @@
 const sleep = require('./utils');
 const command_handler = require('./event_handler');
-const { getLastMessages } = require('./message');
+const { getLastMessages } = require('./services/message');
 
 async function run_bot()
 {
@@ -21,7 +21,7 @@ async function run_bot()
                 
                 if (message.msg.startsWith("!"))
                 {
-                    await command_handler(message.msg.slice(1));
+                    await command_handler(message);
                 }
             }
         }

@@ -1,4 +1,4 @@
-const { sendMessage } = require('./../message');
+const { sendMessage } = require('./../services/message');
 
 module.exports =
 {
