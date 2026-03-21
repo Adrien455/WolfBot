@@ -1,10 +1,11 @@
 const { CLAN_ID, OWNER_ID} = require('./../config');
 const { get } = require('./../api');
 
+let MEMBERS = [];
 let VIPS = [];
 let QUESTS = [];
 
-async function set_vips()
+async function set_members()
 {
     const leader = await get(`clans/${CLAN_ID}/info`);
     const members = await get(`clans/${CLAN_ID}/members`);
@@ -15,7 +16,16 @@ async function set_vips()
         .filter(member => member.isCoLeader)
         .map(member => member.playerId)
 
+    const MEMBERS_IDS = members
+        .map(member => member.playerId);
+
+    MEMBERS = MEMBERS_IDS;
     VIPS = [LEADER_ID, OWNER_ID, ...CO_LEADERS_IDS];
+}
+
+function get_members()
+{
+    return MEMBERS;
 }
 
 function get_vips()
@@ -33,4 +43,4 @@ function get_quests()
     return QUESTS;
 }
 
-module.exports = { set_vips, get_vips, set_quests, get_quests };
+module.exports = { set_members, get_members, get_vips, set_quests, get_quests };

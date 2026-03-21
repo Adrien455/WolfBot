@@ -10,9 +10,22 @@ async function run_bot()
     {
         const messages = await getLastMessages();
 
-        for(let i = 29; i >= 0; i--)
+        if(!messages) 
+        {
+            console.log("Uneexpected null / undefined messages");
+            await sleep(2000);
+            continue;
+        }
+
+        for(let i = messages.length - 1; i >= 0; i--)
         {
             const message = messages[i];
+            if(!message)
+            {
+                console.log("Unexpected null / undefined message");
+                continue;
+            }
+
             const msg_date = new Date(message.date);
 
             if (msg_date > last_seen_date)
