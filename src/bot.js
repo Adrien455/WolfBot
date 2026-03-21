@@ -1,5 +1,5 @@
 const sleep = require('./utils');
-const command_handler = require('./event_handler');
+const command_handler = require('./command_handler');
 const { getLastMessages } = require('./services/message');
 
 async function run_bot()

@@ -4,9 +4,9 @@ const { CLAN_ID } = require('../config');
 module.exports =
 {
     name: "skip",
-    method: "post",
     description: "Skip waiting time for next quest tier.",
     strict: true,
+    dev: false,
 
     async execute()
     {

@@ -3,9 +3,9 @@ const { sendMessage } = require('./../services/message');
 module.exports =
 {
     name: "greet",
-    method: "post",
     description: "Say hello in the clan chat",
     strict: false,
+    dev: false,
 
     async execute()
     {

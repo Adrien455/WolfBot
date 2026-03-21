@@ -4,7 +4,7 @@ const cron = require('node-cron');
 
 const every_monday = '0 0 * * 1';
 
-cron.schedule(every_monday, () => { set_quests(); });
+cron.schedule(every_monday, async () => { await set_quests(); });
 
 async function start()
 {

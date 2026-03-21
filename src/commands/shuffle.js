@@ -4,9 +4,9 @@ const { CLAN_ID } = require('./../config');
 module.exports =
 {
     name: "shuffle",
-    method: "post",
     description: "Shuffle quests.",
     strict: true,
+    dev: false,
 
     async execute()
     {

@@ -1,13 +1,13 @@
 const {  post } = require('../api');
 const { CLAN_ID } = require('../config');
-const { choose_quest } = require('./../services/choose_quest');
+const { choose_quest } = require('./../services/quest');
 
 module.exports =
 {
     name: "claim",
-    method: "post",
     description: "Claim most voted gold quest. Will take the first one in case of draw. Doesnt take votes for shuffle into account. Use !shuffle for that purpose.",
     strict: true,
+    dev: false,
 
     async execute()
     {

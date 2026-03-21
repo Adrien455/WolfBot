@@ -4,9 +4,9 @@ const { CLAN_ID } = require('../config');
 module.exports =
 {
     name: "extend",
-    method: "post",
     description: "Claim additionnal time for the current quest tier.",
     strict: true,
+    dev: false,
 
     async execute()
     {
