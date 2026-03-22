@@ -93,7 +93,7 @@ Restricted to players included in `DEVS_IDS`.
 
 - This bot is currently designed to work in a **single clan** (id is hardcoded).
 
-- It relies on **polling** (no webhook allowed) and continuously checks clan messages, clan logs and clan ledger.
+- It relies on **polling** and continuously checks clan messages, clan logs and clan ledger.
 
 - Adding this bot to another clan will have no effect.
 
@@ -120,6 +120,7 @@ Restricted to players included in `DEVS_IDS`.
     │   ├── command_handler.js
     │   ├── ledger_handler.js
     │   └── log_handler.js
+    ├── monitoring.js
     ├── pollers
     │   ├── chat_poller.js
     │   ├── ledger_poller.js
@@ -136,4 +137,4 @@ Restricted to players included in `DEVS_IDS`.
 
 ## Author
 
-Made by **Aden**.
+Made by **aDen**.
