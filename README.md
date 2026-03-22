@@ -42,7 +42,7 @@ const DEVS_IDS = [
 ] 
 ```
 
-You can retrieve IDs using [wolvesville api](https://api-docs.wolvesville.com/).
+You can retrieve IDs using [wolvesville_api](https://api.wolvesville.com/).
 See the [documentation](https://api-docs.wolvesville.com/) for the endpoints.
 
 **⚠️ Warning :** The players included in `DEVS_IDS` have accessed at **debugging commands** that can modify internal data. Only add trusted members.
@@ -97,6 +97,7 @@ Restricted to players included in `DEVS_IDS`.
 
 ## Structure
 
+```bash
 .
 ├── README.md
 ├── app.js
@@ -129,6 +130,7 @@ Restricted to players included in `DEVS_IDS`.
     │   ├── clear.js
     │   └── log.js
     └── utils.js
+```
 
 ## Author
 
