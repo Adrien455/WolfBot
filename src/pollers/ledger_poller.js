@@ -11,9 +11,8 @@ async function ledger_poller(starting_date)
     {
         const ledger = await get(`clans/${CLAN_ID}/ledger`);
 
-        if(!ledger) 
+        if(!ledger || ledger.length == 0)   // very unlikely
         {
-            console.log("Unexpected null / undefined ledger");
             await sleep(2000);
             continue;
         }
@@ -21,17 +20,11 @@ async function ledger_poller(starting_date)
         for(let i = ledger.length - 1; i >= 0; i--)
         {
             const transaction = ledger[i];
-
-            if(!transaction)
-            {
-                console.log("Unexpected null / undefined transaction");
-                continue;
-            }
-
             const transaction_date = new Date(transaction.creationTime);
 
             if (transaction_date > last_seen_date)
             {
+                last_seen_date = transaction_date;
                 await ledger_handler(transaction);
             }
         }

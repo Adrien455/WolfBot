@@ -11,9 +11,8 @@ async function logs_poller(starting_date)
     {
         const logs = await get(`clans/${CLAN_ID}/logs`);
 
-        if(!logs) 
+        if(!logs || logs.length == 0)   // very unlikely
         {
-            console.log("Unexpected null / undefined logs");
             await sleep(2000);
             continue;
         }
@@ -21,17 +20,11 @@ async function logs_poller(starting_date)
         for(let i = logs.length - 1; i >= 0; i--)
         {
             const log = logs[i];
-
-            if(!log)
-            {
-                console.log("Unexpected null / undefined log");
-                continue;
-            }
-
             const log_date = new Date(log.creationTime);
 
             if (log_date > last_seen_date)
             {
+                last_seen_date = log_date;
                 await log_handler(log);
             }
         }

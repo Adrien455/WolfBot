@@ -13,7 +13,7 @@ async function update_participating_members()
     {
         const is_participating = member.balance >= REQUIRED;
 
-        if (is_participating)
+        if (is_participating)   // should be done AFTER accepting quest (possible with ledger)
         {
             update_balance(player_id, -500);
         }

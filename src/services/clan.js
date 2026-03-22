@@ -1,16 +1,31 @@
-const { CLAN_ID, DEV_ID } = require('../config');
+const { CLAN_ID, DEVS_IDS, OWNER_ID } = require('../config');
 const { get, put } = require('../api/requests');
 
 let MEMBERS = new Map();    // keep track of each member information
-let VIPS = [];              // may change in game (unlikely) but needs to be updated if so (static for now)
-let QUESTS = [];
+let QUESTS = [];            // available quests
 
-function create_member()   // may expand fields
+function create_member(overrides = {})
 {
     return {
+        name: undefined,
         balance: 0,
-        is_participating: false
+        participating: false,
+        coleader: false,
+        leader: false,
+        dev: false,
+        owner: false,
+        ...overrides
     };
+}
+
+function add_member(member_id, overrides = {})
+{
+    MEMBERS.set(member_id, create_member(
+    {
+        ...overrides,
+        owner: member_id === OWNER_ID,
+        dev: DEVS_IDS.includes(member_id)   // owner and dev cant be overriden change config.js for that purpose
+    }));
 }
 
 async function set_members()
@@ -18,21 +33,48 @@ async function set_members()
     const clan_info = await get(`clans/${CLAN_ID}/info`);
     const members = await get(`clans/${CLAN_ID}/members`);
 
-    const LEADER_ID = clan_info.leaderId;
+    members.forEach(member =>
+    {
+        add_member(member.playerId,
+        {
+            name: member.username,
+            leader: member.playerId === clan_info.leaderId,
+            coleader: member.isCoLeader,
+        });
+    });
+}
 
-    const CO_LEADERS_IDS = members
-        .filter(member => member.isCoLeader)
-        .map(member => member.playerId);
+function remove_member(member_id)
+{
+    MEMBERS.delete(member_id);
+}
 
-    members.forEach(member => MEMBERS.set(member.playerId, create_member()));
-    
-    VIPS = [LEADER_ID, DEV_ID, ...CO_LEADERS_IDS];
+function change_leader(member_id, leader_id)
+{
+    const former = MEMBERS.get(leader_id);
+    former.leader = false;
+
+    const leader = MEMBERS.get(member_id);
+    leader.leader = true;
+    leader.coleader = false;
+}
+
+function promote(member_id)
+{
+    const coleader = MEMBERS.get(member_id);
+    coleader.coleader = true;
+}
+
+function demote(coleader_id)
+{
+    const coleader = MEMBERS.get(coleader_id);
+    coleader.coleader = false;
 }
 
 async function update_status(member_id, is_participating)
 {
     const member = MEMBERS.get(member_id);
-    member.is_participating = is_participating;
+    member.participating = is_participating;
 
     const body = { "participateInQuests": is_participating };
     await put(`clans/${CLAN_ID}/members/${member_id}/participateInQuests`, body);
@@ -44,26 +86,9 @@ function update_balance(member_id, amount)
     member.balance += amount;
 }
 
-function update_members(player_id, is_new)
-{
-    if(is_new)
-    {
-        MEMBERS.set(player_id, create_member(0, false));
-    }
-    else
-    {
-        MEMBERS.delete(player_id);
-    }
-}
-
 function get_members()
 {
     return MEMBERS;
-}
-
-function get_vips()
-{
-    return VIPS;
 }
 
 async function set_quests()
@@ -79,10 +104,13 @@ function get_quests()
 module.exports = { 
     set_members,
     get_members,
-    update_members,
+    change_leader,
+    promote,
+    demote,
+    add_member,
+    remove_member,
     update_balance,
     update_status,
-    get_vips,
     set_quests,
     get_quests,
 };

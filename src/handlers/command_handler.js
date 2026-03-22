@@ -2,12 +2,12 @@ const fs = require("fs");
 const path = require("path");
 
 const { send_message } = require('../api/message');
-const { get_vips } = require('../services/clan');
-const { DEV_ID } = require('../config');
+const { get_members } = require('../services/clan');
+const { DEVS_IDS } = require('../config');
 
 const commands = new Map();
 
-function load_commands(dir)
+function load_commands(dir)     // loads modules in specified directory and add them to commands
 {
     const files = fs.readdirSync(path.join(__dirname, dir));
 
@@ -20,16 +20,21 @@ function load_commands(dir)
 load_commands("../commands");
 load_commands("../test_commands");
 
-async function execute(command, player_id, args)
+async function execute(command, player_id, args)    // checks perms
 {
-    if (command.dev && player_id !== DEV_ID)
+    if (command.dev && !DEVS_IDS.includes(player_id))
     {
         return "Error: You are not allowed to use this command";
     }
 
-    if (command.strict && !get_vips().includes(player_id))
+    if (command.strict)
     {
-        return "Error: You are not allowed to use this command";
+        const member = get_members().get(player_id);
+
+        if(!member.coleader && !member.leader)
+        {
+            return "Error: You are not allowed to use this command";
+        }
     }
 
     return await command.execute(player_id, args);
