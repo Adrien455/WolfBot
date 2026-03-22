@@ -1,18 +1,18 @@
-const sleep = require('./utils');
-const command_handler = require('./command_handler');
-const { getLastMessages } = require('./services/message');
+const sleep = require('../utils');
+const command_handler = require('../handlers/command_handler');
+const { get_last_messages } = require('../api/message');
 
-async function run_bot()
+async function chat_poller(starting_date)
 {
-    let last_seen_date = new Date();
+    let last_seen_date = starting_date;
 
     while(1)
     {
-        const messages = await getLastMessages();
+        const messages = await get_last_messages();
 
-        if(!messages) 
+        if(!messages || messages.length == 0) 
         {
-            console.log("Uneexpected null / undefined messages");
+            console.log("Unexpected null / undefined messages");
             await sleep(2000);
             continue;
         }
@@ -20,6 +20,7 @@ async function run_bot()
         for(let i = messages.length - 1; i >= 0; i--)
         {
             const message = messages[i];
+
             if(!message)
             {
                 console.log("Unexpected null / undefined message");
@@ -43,4 +44,4 @@ async function run_bot()
     }
 }
 
-module.exports = run_bot;
+module.exports = chat_poller;

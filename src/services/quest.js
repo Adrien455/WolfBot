@@ -1,6 +1,6 @@
-const { get } = require('./../api');
-const { CLAN_ID } = require('./../config');
-const { get_quests, get_members, update_balance, update_status } = require('./../services/clan');
+const { get } = require('../api/requests');
+const { CLAN_ID } = require('../config');
+const { get_quests, get_members, update_balance, update_status } = require('../services/clan');
 
 const REQUIRED = 500;   // required amount of gold to participate in a quest
                         // may become adjustable later (static now)

@@ -1,4 +1,4 @@
-const { sendMessage } = require('./../services/message');
+const { send_message } = require('../api/message');
 
 module.exports =
 {
@@ -9,6 +9,6 @@ module.exports =
 
     async execute()
     {
-        return await sendMessage("Beep Beep I'm a bot.");
+        return await send_message("Beep Beep I'm a bot.");
     }
 };

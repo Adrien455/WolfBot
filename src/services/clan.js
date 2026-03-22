@@ -1,5 +1,5 @@
-const { CLAN_ID, DEV_ID } = require('./../config');
-const { get, put } = require('./../api');
+const { CLAN_ID, DEV_ID } = require('../config');
+const { get, put } = require('../api/requests');
 
 let MEMBERS = new Map();    // keep track of each member information
 let VIPS = [];              // may change in game (unlikely) but needs to be updated if so (static for now)

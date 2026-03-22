@@ -1,4 +1,4 @@
-const { set_quests } = require('../services/clan');
+const { set_quests, set_members } = require('../services/clan');
 
 module.exports =
 {

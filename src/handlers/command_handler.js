@@ -1,9 +1,9 @@
 const fs = require("fs");
 const path = require("path");
 
-const { sendMessage } = require('./services/message');
-const { get_vips } = require('./services/clan');
-const { DEV_ID } = require('./config');
+const { send_message } = require('../api/message');
+const { get_vips } = require('../services/clan');
+const { DEV_ID } = require('../config');
 
 const commands = new Map();
 
@@ -17,8 +17,8 @@ function load_commands(dir)
     }
 }
 
-load_commands("commands");
-load_commands("test_commands");
+load_commands("../commands");
+load_commands("../test_commands");
 
 async function execute(command, player_id, args)
 {
@@ -45,7 +45,7 @@ async function command_handler(message)
 
     if(!command)
     {
-        await sendMessage("Error: unknown command");
+        await send_message("Error: unknown command");
         console.log("unknown command");
         return;
     }
@@ -55,7 +55,7 @@ async function command_handler(message)
 
     if(typeof response === "string" && response.startsWith("Error"))
     {
-        await sendMessage(response);    // might hide initial error if sendMessage fails
+        await send_message(response);    // might hide initial error if sendMessage fails
     }   
 }
 

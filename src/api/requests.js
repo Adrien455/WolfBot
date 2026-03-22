@@ -1,5 +1,5 @@
 const superagent = require('superagent');
-const { API_KEY, BASE_URL } = require('./config');
+const { API_KEY, BASE_URL } = require('../config');
 
 async function post(endpoint, body)
 {
