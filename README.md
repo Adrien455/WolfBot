@@ -77,6 +77,8 @@ node app.js
 
 - `!extend` → Extends given time for a quest stage.
 
+- `savings` → Returns current savings of the player. 
+
 ## Debugging Commands :
 
 Restricted to players included in `DEVS_IDS`.

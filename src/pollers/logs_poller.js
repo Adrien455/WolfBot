@@ -6,6 +6,7 @@ const { CLAN_ID } = require('../config');
 async function logs_poller(starting_date)
 {
     let last_seen_date = starting_date;
+    let delay = 1000;
 
     while(1)
     {
@@ -13,7 +14,7 @@ async function logs_poller(starting_date)
 
         if(!logs || logs.length == 0)   // very unlikely
         {
-            await sleep(2000);
+            await sleep(delay);
             continue;
         }
 
@@ -27,9 +28,13 @@ async function logs_poller(starting_date)
                 last_seen_date = log_date;
                 await log_handler(log);
             }
+            else
+            {
+                delay = Math.min(delay + 300, 5000);
+            }
         }
 
-        await sleep(2000);
+        await sleep(delay);
     }
 }
 

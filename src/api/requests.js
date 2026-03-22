@@ -1,8 +1,11 @@
 const superagent = require('superagent');
 const { API_KEY, BASE_URL } = require('../config');
+const { log_request, log_processed } = require('../monitoring');
 
 async function post(endpoint, body)
 {
+    const start = Date.now();
+
     try
     {
     const response = await superagent
@@ -12,6 +15,8 @@ async function post(endpoint, body)
         .set('Content-Type', 'application/json')
         .send(body);
 
+        log_request(Date.now() - start);
+        log_processed("post");
         return response.body;
     }
     catch (err)
@@ -24,6 +29,8 @@ async function post(endpoint, body)
 
 async function put(endpoint, body)
 {
+    const start = Date.now();
+
     try
     {
     const response = await superagent
@@ -33,6 +40,8 @@ async function put(endpoint, body)
         .set('Content-Type', 'application/json')
         .send(body);
 
+        log_request(Date.now() - start);
+        log_processed("put");
         return response.body;
     }
     catch (err)
@@ -45,6 +54,8 @@ async function put(endpoint, body)
 
 async function get(endpoint)
 {
+    const start = Date.now();
+
     try
     {
     const response = await superagent
@@ -53,6 +64,8 @@ async function get(endpoint)
         .set('Accept', 'application/json')
         .set('Content-Type', 'application/json');
 
+        log_request(Date.now() - start);
+        log_processed("get");
         return response.body;
     }
     catch (err)

@@ -7,6 +7,7 @@ const PREFIX = "!";
 async function chat_poller(starting_date)
 {
     let last_seen_date = starting_date;
+    let delay = 1000;
 
     while(1)
     {
@@ -14,7 +15,7 @@ async function chat_poller(starting_date)
 
         if(!messages || messages.length == 0)   // very unlikely
         {
-            await sleep(2000);
+            await sleep(delay);
             continue;
         }
 
@@ -32,9 +33,13 @@ async function chat_poller(starting_date)
                     await command_handler(message);
                 }
             }
+            else
+            {
+                delay = Math.min(delay + 300, 5000);
+            }
         }
 
-        await sleep(2000);
+        await sleep(delay);
     }
 }
 
