@@ -20,36 +20,34 @@ npm install
 
 ## Configuration :
 
-### Api Key :
+### API Key :
 
 Create an .env file at the repository root and put your personal api key:
 
 ```env
 API_KEY = "MY_API_KEY"
 ```
-**⚠️ Warning :** This file is **critical** and must stay **confidential**. You can reset it in game's settings in case of accidental push / any leaks.
+**⚠️ Warning :** This file must stay **confidential**. You can reset it in game's settings in case of accidental push / any leaks.
 
 ### Config.js :
 
-You can set your clan id, owner id, and the devs ids in `config.js` :
+Set your clan and users IDs in `config.js` :
 
 ```js
 const CLAN_ID = "MY_CLAN_ID";
-const OWNER_ID = "MY_BOT_ID";
-const DEVS_ID = 
-[
+const OWNER_ID = "OWNER_ID";
+const DEVS_IDS = [
     "DEV_ID1",
     "DEV_ID2",
-    ...
 ] 
 ```
 
-You can get your clan / player id with [wolvesville_api](https://api-docs.wolvesville.com/) followed by the proper endpoints either by using postman, `curl` or others.
+You can retrieve IDs using [wolvesville api](https://api-docs.wolvesville.com/).
 See the [documentation](https://api-docs.wolvesville.com/) for the endpoints.
 
-**⚠️ Warning :** The players included in `DEVS_IDS` have accessed at debugging commands that can modify the database of the members. Keep it in mind when adding someone in it.
+**⚠️ Warning :** The players included in `DEVS_IDS` have accessed at **debugging commands** that can modify internal data. Only add trusted members.
 
-## Launch bot :
+## Run bot :
 
 ```bash
 node app.js
@@ -57,34 +55,81 @@ node app.js
 
 ## Behaviour :
 
-- greet new members with the message `Welcome member_name !`.
+- Greets new members with : `Welcome <member_name> !`.
 
 ## Commands :
 
 ### Prefix : `!`
 
-- `!greet` → The bot says hi.
+- `!greet` → Says hi.
 
-- `!claim` → Select the most voted gold quest. In case of tie the last encountered one will be selected. Does not take votes for shuffle into account. It will also check into each member contribution, and update their participating status. For now the required amount to participate is fixed at 500 gold. The bot starts computing contribution AT LAUCNH. Previous ones wont be taken into account.
+- `!claim` → 
+    - Selects the most voted gold quest.
+    - In case of tie the **last encountered** one will be selected.
+    - Does not take votes for shuffle into account. 
+    - Updates member participation status based on contribution. 
+    - Required amount : **500 gold** (const for now).
+    - Contributions are tracked from bot startup only.
 
-- `!shuffle` → Shuffle available quests.
+- `!shuffle` → Shuffles available quests.
 
-- `!skip` → Skip waiting time between two quest stages.
+- `!skip` → Skips waiting time between two quest stages.
 
-- `!extend` → Extend given time for a quest stage.
+- `!extend` → Extends given time for a quest stage.
 
 ## Debugging Commands :
 
-These commands are strictly reserved to debugging purposes. Only players included in `DEVS_IDS` can use them.
+Restricted to players included in `DEVS_IDS`.
 
-- `!balance` -> Adds 500 gold to the balance of a member in MEMBERS database.
+- `!balance` -> Adds 500 gold to the balance of a member (in localdata only).
 
-- `!log` -> Logs the MEMBERS database.
+- `!log` -> Logs the database of members.
 
-- `!clear` → Clear cache of available quests and members.
+- `!clear` → Clear cached quests and members.
 
 ## Notes
 
-This bot is currently designed to work in a single clan (id is hardcoded) by looping over last messages, logs and ledger. Adding this bot id to another clan wont do anything.
+- This bot is currently designed to work in a **single clan** (id is hardcoded).
 
-**Made by me (aDen)**
+- It relies on **polling** (no webhook allowed) and continuously checks clan messages, clan logs and clan ledger.
+
+- Adding this bot to another clan will have no effect.
+
+## Structure
+
+.
+├── README.md
+├── app.js
+├── package-lock.json
+├── package.json
+└── src
+    ├── api
+    │   ├── message.js
+    │   └── requests.js
+    ├── commands
+    │   ├── claim.js
+    │   ├── extend.js
+    │   ├── greet.js
+    │   ├── shuffle.js
+    │   └── skip.js
+    ├── config.js
+    ├── handlers
+    │   ├── command_handler.js
+    │   ├── ledger_handler.js
+    │   └── log_handler.js
+    ├── pollers
+    │   ├── chat_poller.js
+    │   ├── ledger_poller.js
+    │   └── logs_poller.js
+    ├── services
+    │   ├── clan.js
+    │   └── quest.js
+    ├── test_commands
+    │   ├── balance.js
+    │   ├── clear.js
+    │   └── log.js
+    └── utils.js
+
+## Author
+
+Made by **Aden**.
