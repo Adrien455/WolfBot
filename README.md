@@ -77,13 +77,15 @@ node app.js
 
 - `!extend` → Extends given time for a quest stage.
 
-- `savings` → Returns current savings of the player. 
+- `!savings` → Returns current savings of the player. 
+
+- `!require <value>` → Change the gold required to participate. Default value is 500 gold.
 
 ## Debugging Commands :
 
 Restricted to players included in `DEVS_IDS`.
 
-- `!balance` -> Adds 500 gold to the balance of a member (in localdata only).
+- `!balance <value>` -> Adds specified amount of gold to the balance of a member (in localdata only). Negative values are accepted. Default value is 500 gold.
 
 - `!log` -> Logs the database of members.
 
