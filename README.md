@@ -42,7 +42,7 @@ const DEVS_IDS = [
 ] 
 ```
 
-You can retrieve IDs using [wolvesville_api](https://api.wolvesville.com/).
+You can retrieve IDs using https://api.wolvesville.com/.<br>
 See the [documentation](https://api-docs.wolvesville.com/) for the endpoints.
 
 **⚠️ Warning :** The players included in `DEVS_IDS` have accessed at **debugging commands** that can modify internal data. Only add trusted members.
@@ -114,7 +114,7 @@ Restricted to players included in `DEVS_IDS`.
 ├── README.md
 ├── app.js
 ├── data
-│   └── members.json
+│   └── 
 ├── package-lock.json
 ├── package.json
 └── src
@@ -131,12 +131,10 @@ Restricted to players included in `DEVS_IDS`.
     │   └── skip.js
     ├── config.js
     ├── controller.js
-    ├── cron.js
     ├── handlers
     │   ├── command_handler.js
     │   ├── ledger_handler.js
     │   └── log_handler.js
-    ├── monitoring.js
     ├── pollers.js
     ├── services
     │   ├── clan.js
@@ -147,7 +145,10 @@ Restricted to players included in `DEVS_IDS`.
     │   ├── give.js
     │   ├── log.js
     │   └── stop.js
-    └── utils.js
+    └── utils
+        ├── cron.js
+        ├── monitoring.js
+        └── sleep.js
 ```
 
 ## Author
