@@ -68,7 +68,7 @@ node app.js
     - In case of tie the **last encountered** one will be selected.
     - Does not take votes for shuffle into account. 
     - Updates member participation status based on contribution. 
-    - Required amount : **500 gold** (const for now).
+    - Required amount : Initialized at **500 gold**.
     - Contributions are tracked from bot startup only.
 
 - `!shuffle` → Shuffles available quests.
@@ -123,10 +123,7 @@ Restricted to players included in `DEVS_IDS`.
     │   ├── ledger_handler.js
     │   └── log_handler.js
     ├── monitoring.js
-    ├── pollers
-    │   ├── chat_poller.js
-    │   ├── ledger_poller.js
-    │   └── logs_poller.js
+    ├── pollers.js
     ├── services
     │   ├── clan.js
     │   └── quest.js
