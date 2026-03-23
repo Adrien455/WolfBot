@@ -1,5 +1,6 @@
 const { post } = require('../api/requests');
 const { CLAN_ID } = require('../config');
+const { set_quests } = require('../services/clan');
 
 module.exports =
 {
@@ -10,6 +11,13 @@ module.exports =
 
     async execute()
     {
-        return await post(`clans/${CLAN_ID}/quests/available/shuffle`);
+        const response = await post(`clans/${CLAN_ID}/quests/available/shuffle`);
+
+        if(!response)
+        {
+            await set_quests();
+        }
+
+        return response;
     }
 };

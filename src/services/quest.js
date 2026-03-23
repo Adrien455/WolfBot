@@ -2,8 +2,12 @@ const { get } = require('../api/requests');
 const { CLAN_ID } = require('../config');
 const { get_quests, get_members, update_balance, update_status } = require('../services/clan');
 
-const REQUIRED = 500;   // required amount of gold to participate in a quest
-                        // may become adjustable later (static now)
+let REQUIRED = 500;   // set to 500, can be changed via !require
+
+function set_required(value)
+{
+    REQUIRED = value;
+}
 
 async function update_participating_members()
 {
@@ -15,7 +19,7 @@ async function update_participating_members()
 
         if (is_participating)   // should be done AFTER accepting quest (possible with ledger)
         {
-            update_balance(player_id, -500);
+            update_balance(player_id, -REQUIRED);
         }
 
         if (member.quest !== is_participating) 
@@ -54,4 +58,4 @@ async function choose_quest()
     return max_id;
 }
 
-module.exports = { choose_quest };
+module.exports = { choose_quest, set_required };

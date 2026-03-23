@@ -93,6 +93,7 @@ function get_members()
 
 async function set_quests()
 {
+    console.log("Quests set at", new Date());
     QUESTS = await get(`clans/${CLAN_ID}/quests/available`);
 }
 

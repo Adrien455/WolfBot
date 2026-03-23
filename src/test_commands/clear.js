@@ -4,7 +4,7 @@ module.exports =
 {
     name: "clear",
     description: "Clear cache.",
-    strict: true,
+    strict: false,
     dev: true,
 
     async execute()

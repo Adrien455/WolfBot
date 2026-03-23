@@ -37,13 +37,13 @@ async function execute(command, player_id, args)    // checks perms
         }
     }
 
-    return await command.execute(player_id, args);
+    return await command.execute(player_id, ...args);
 }
 
 async function command_handler(message)
 {
     const args = message.msg.slice(1).trim().split(/ +/);
-    const name = args.shift().toLowerCase();    // may add command arguments later
+    const name = args.shift().toLowerCase();
     const player_id = message.playerId;
 
     const command = commands.get(name);
@@ -60,7 +60,7 @@ async function command_handler(message)
 
     if(typeof response === "string" && response.startsWith("Error"))
     {
-        await send_message(response);    // might hide initial error if sendMessage fails
+        await send_message(response);    // might hide initial error if sendMessage fails (chat clan only)
     }   
 }
 
