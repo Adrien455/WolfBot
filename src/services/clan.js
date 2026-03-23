@@ -1,8 +1,8 @@
 const { CLAN_ID, DEVS_IDS, OWNER_ID } = require('../config');
 const { get, put } = require('../api/requests');
+const { schedule_save_members } = require('../storage');
 
 let MEMBERS = new Map();    // keep track of each member information
-let QUESTS = [];            // available quests
 
 function create_member(overrides = {})
 {
@@ -28,25 +28,38 @@ function add_member(member_id, overrides = {})
     }));
 }
 
-async function set_members()
+async function set_members(saved_members)
 {
-    const clan_info = await get(`clans/${CLAN_ID}/info`);
-    const members = await get(`clans/${CLAN_ID}/members`);
-
-    members.forEach(member =>
+    if(saved_members)
     {
-        add_member(member.playerId,
+        for (const [player_id, member] of saved_members.entries())
         {
-            name: member.username,
-            leader: member.playerId === clan_info.leaderId,
-            coleader: member.isCoLeader,
+            MEMBERS.set(player_id, member);
+        }
+    }
+    else
+    {
+        const clan_info = await get(`clans/${CLAN_ID}/info`);
+        const members = await get(`clans/${CLAN_ID}/members`);
+
+        members.forEach(member =>
+        {
+            add_member(member.playerId,
+            {
+                name: member.username,
+                leader: member.playerId === clan_info.leaderId,
+                coleader: member.isCoLeader,
+            });
         });
-    });
+    }
+
+    schedule_save_members(MEMBERS);
 }
 
 function remove_member(member_id)
 {
     MEMBERS.delete(member_id);
+    schedule_save_members(MEMBERS);
 }
 
 function change_leader(member_id, leader_id)
@@ -57,18 +70,24 @@ function change_leader(member_id, leader_id)
     const leader = MEMBERS.get(member_id);
     leader.leader = true;
     leader.coleader = false;
+
+    schedule_save_members(MEMBERS);
 }
 
 function promote(member_id)
 {
     const coleader = MEMBERS.get(member_id);
     coleader.coleader = true;
+
+    schedule_save_members(MEMBERS);
 }
 
 function demote(coleader_id)
 {
     const coleader = MEMBERS.get(coleader_id);
     coleader.coleader = false;
+
+    schedule_save_members(MEMBERS);
 }
 
 async function update_status(member_id, is_participating)
@@ -78,28 +97,21 @@ async function update_status(member_id, is_participating)
 
     const body = { "participateInQuests": is_participating };
     await put(`clans/${CLAN_ID}/members/${member_id}/participateInQuests`, body);
+
+    schedule_save_members(MEMBERS);
 }
 
 function update_balance(member_id, amount)
 {
     const member = MEMBERS.get(member_id);
     member.balance += amount;
+
+    schedule_save_members(MEMBERS);
 }
 
 function get_members()
 {
     return MEMBERS;
-}
-
-async function set_quests()
-{
-    console.log("Quests set at", new Date());
-    QUESTS = await get(`clans/${CLAN_ID}/quests/available`);
-}
-
-function get_quests()
-{
-    return QUESTS;
 }
 
 module.exports = { 
@@ -111,7 +123,5 @@ module.exports = {
     add_member,
     remove_member,
     update_balance,
-    update_status,
-    set_quests,
-    get_quests,
+    update_status
 };

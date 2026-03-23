@@ -1,22 +1,21 @@
-const { set_members, set_quests } = require('./src/services/clan');
+const { load_members } = require('./src/storage');
+const { set_members } = require('./src/services/clan');
+const { set_quests } = require('./src/services/quest');
+
 const run_pollers = require('./src/pollers');
 
-const { report } = require('./src/monitoring');
-// setInterval(report, 10000);
+const { start_cron } = require('./src/utils/cron');
 
-const cron = require('node-cron');
-const every_monday = '0 0 * * 1';
-
-cron.schedule(every_monday, async () => { 
-  await set_quests(); }, 
-  {
-    timezone: 'UTC'
-});
+const { report } = require('./src/utils/monitoring');
+// setInterval(report, 10000);  // this will prevent !stop
 
 async function start()
 {
-  await set_members();
+  const saved_members = await load_members();
+
+  await set_members(saved_members);
   await set_quests();
+  start_cron();
 
   let starting_date = new Date();
 

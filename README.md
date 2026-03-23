@@ -63,6 +63,12 @@ node app.js
 
 - `!greet` → Says hi.
 
+- `!savings` → Returns current savings of the player.
+
+### Restricted
+
+Restricted to leader and coleaders.
+
 - `!claim` → 
     - Selects the most voted gold quest.
     - In case of tie the **last encountered** one will be selected.
@@ -77,19 +83,19 @@ node app.js
 
 - `!extend` → Extends given time for a quest stage.
 
-- `!savings` → Returns current savings of the player. 
-
 - `!require <value>` → Change the gold required to participate. Default value is 500 gold.
 
 ## Debugging Commands :
 
 Restricted to players included in `DEVS_IDS`.
 
-- `!give <value>` -> Adds specified amount of gold to the balance of a member (in localdata only). Negative values are accepted. Default value is 500 gold.
+- `!give <value>` → Adds specified amount of gold to the balance of a member (in localdata only). Negative values are accepted. Default value is 500 gold.
 
-- `!log` -> Logs the database of members.
+- `!log` → Logs the database of members.
 
 - `!clear` → Clear cached quests and members.
+
+- `!stop` → Stops the program. The data of members will be saved locally.
 
 ## Notes
 
@@ -99,12 +105,16 @@ Restricted to players included in `DEVS_IDS`.
 
 - Adding this bot to another clan will have no effect.
 
+- Member data is continuously saved locally. When the bot starts, it loads any existing local data. Note that changes made while the bot is offline (between shutdown and restart) will not be updated. You can use !clear to update it, but it will reset members balances.
+
 ## Structure
 
 ```bash
 .
 ├── README.md
 ├── app.js
+├── data
+│   └── members.json
 ├── package-lock.json
 ├── package.json
 └── src
@@ -115,9 +125,13 @@ Restricted to players included in `DEVS_IDS`.
     │   ├── claim.js
     │   ├── extend.js
     │   ├── greet.js
+    │   ├── require.js
+    │   ├── savings.js
     │   ├── shuffle.js
     │   └── skip.js
     ├── config.js
+    ├── controller.js
+    ├── cron.js
     ├── handlers
     │   ├── command_handler.js
     │   ├── ledger_handler.js
@@ -127,10 +141,12 @@ Restricted to players included in `DEVS_IDS`.
     ├── services
     │   ├── clan.js
     │   └── quest.js
+    ├── storage.js
     ├── test_commands
-    │   ├── balance.js
     │   ├── clear.js
-    │   └── log.js
+    │   ├── give.js
+    │   ├── log.js
+    │   └── stop.js
     └── utils.js
 ```
 

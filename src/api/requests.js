@@ -1,6 +1,6 @@
 const superagent = require('superagent');
 const { API_KEY, BASE_URL } = require('../config');
-const { log_request, log_processed } = require('../monitoring');
+const { log_request, log_processed } = require('../utils/monitoring');
 
 async function post(endpoint, body)
 {

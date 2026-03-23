@@ -1,10 +1,14 @@
 const { get } = require('./api/requests');
-const { CLAN_ID } = require('./config');
 const { get_last_messages } = require('./api/message');
+
+const { CLAN_ID } = require('./config');
+
 const command_handler = require('./handlers/command_handler');
 const log_handler =  require('./handlers/log_handler');
 const ledger_handler =  require('./handlers/ledger_handler');
-const sleep = require('./utils');
+
+const { get_running } = require('./controller');
+const sleep = require('./utils/sleep');
 
 const PREFIX = "!";
 
@@ -15,7 +19,7 @@ function create_poller({fetch, get_date, handler, filter = () => true})
         let last_seen_date = starting_date;
         let delay = _delay;
 
-        while(1)
+        while(get_running())
         {
             const events = await fetch();
             let activity = false;

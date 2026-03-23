@@ -1,6 +1,6 @@
 const { post } = require('../api/requests');
 const { CLAN_ID } = require('../config');
-const { set_quests } = require('../services/clan');
+const { set_quests } = require('../services/quest');
 
 module.exports =
 {

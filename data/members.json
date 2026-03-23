@@ -1,0 +1,14 @@
+[
+  [
+    "4ecb4631-556d-4aa6-86cb-26b414cff65a",
+    {
+      "name": "pnj_",
+      "balance": 0,
+      "participating": false,
+      "coleader": false,
+      "leader": true,
+      "dev": true,
+      "owner": false
+    }
+  ]
+]

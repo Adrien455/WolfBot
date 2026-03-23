@@ -1,8 +1,20 @@
 const { get } = require('../api/requests');
 const { CLAN_ID } = require('../config');
-const { get_quests, get_members, update_balance, update_status } = require('../services/clan');
+const { get_members, update_balance, update_status } = require('../services/clan');
 
+let QUESTS = [];            // available quests
 let REQUIRED = 500;   // set to 500, can be changed via !require
+
+async function set_quests()
+{
+    console.log("Quests set at", new Date());
+    QUESTS = await get(`clans/${CLAN_ID}/quests/available`);
+}
+
+function get_quests()
+{
+    return QUESTS;
+}
 
 function set_required(value)
 {
@@ -60,7 +72,7 @@ async function choose_quest()
     const options = await get(`clans/${CLAN_ID}/quests/votes`);
     const votes = options.votes;
 
-    const gold_quests = get_quests()
+    const gold_quests = QUESTS
         .filter(quest => !quest.purchasableWithGems)
         .map(quest => quest.id);
 
@@ -79,4 +91,4 @@ async function choose_quest()
     return max_id;
 }
 
-module.exports = { choose_quest, set_required, update_participating, apply_updates };
+module.exports = { set_quests, get_quests, choose_quest, set_required, update_participating, apply_updates };
