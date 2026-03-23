@@ -1,6 +1,6 @@
 const {  post } = require('../api/requests');
 const { CLAN_ID } = require('../config');
-const { choose_quest } = require('../services/quest');
+const { choose_quest, update_participating, apply_updates } = require('../services/quest');
 
 module.exports =
 {
@@ -12,7 +12,13 @@ module.exports =
     async execute()
     {
         const winner = await choose_quest();
+
+        const updates = update_participating();
      
-        return await post(`clans/${CLAN_ID}/quests/claim`, { "questId": winner });
+        const response = await post(`clans/${CLAN_ID}/quests/claim`, { "questId": winner });
+
+        if(winner && !response) apply_updates(updates);
+        
+        return response;
     }
 };

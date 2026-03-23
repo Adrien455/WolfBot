@@ -9,22 +9,48 @@ function set_required(value)
     REQUIRED = value;
 }
 
-async function update_participating_members()
+function update_participating()
 {
     const members = get_members();
 
-    for (const [player_id, member] of members.entries())
+    const updates = [];
+
+    for(const [player_id, member] of members.entries())
     {
         const is_participating = member.balance >= REQUIRED;
 
-        if (is_participating)   // should be done AFTER accepting quest (possible with ledger)
+        if (is_participating)
         {
-            update_balance(player_id, -REQUIRED);
+            updates.push({
+                player_id,
+                payment: -REQUIRED
+            });
         }
 
-        if (member.quest !== is_participating) 
+        if (member.participating !== is_participating) 
         {
-            await update_status(player_id, is_participating);
+            updates.push({
+                player_id,
+                participating: is_participating
+            });
+        }
+    }
+
+    return updates;
+}
+
+async function apply_updates(updates)
+{
+    for(const update of updates)
+    {
+        if(update.payment)
+        {
+            update_balance(update.player_id, update.payment);
+        }
+
+        if(update.participating !== undefined)
+        {
+            await update_status(update.player_id, update.participating);
         }
     }
 }
@@ -50,12 +76,7 @@ async function choose_quest()
         }
     }
 
-    if(max_id)
-    {
-        await update_participating_members();
-    }
-
     return max_id;
 }
 
-module.exports = { choose_quest, set_required };
+module.exports = { choose_quest, set_required, update_participating, apply_updates };

@@ -9,13 +9,13 @@ module.exports =
 
     async execute(player_id, value = 500)
     {
-        const parsed = parseInt(value, 10);
-
-        if (!Number.isInteger(parsed))
+        if (!/^-?\d+$/.test(value))
         {
             return "Error: Wrong argument. Please enter integer.";
         }
 
-        update_balance(player_id, parseInt(parsed, 10));
+        const parsed = Number(value);
+
+        update_balance(player_id, parsed, 10);
     }
 };

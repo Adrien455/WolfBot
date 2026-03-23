@@ -10,12 +10,12 @@ module.exports =
 
     async execute(player_id, value = 500)
     {
-        const parsed = parseInt(value, 10);
-
-        if (!Number.isInteger(parsed) || parsed < 0)
+        if (!/^\d+$/.test(value))
         {
             return "Error: Wrong argument. Please enter positive integer.";
         }
+
+        const parsed = Number(value, 10);
 
         set_required(parsed);
         return await send_message(`Required gold set at ${parsed}`);

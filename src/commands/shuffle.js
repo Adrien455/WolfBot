@@ -13,10 +13,7 @@ module.exports =
     {
         const response = await post(`clans/${CLAN_ID}/quests/available/shuffle`);
 
-        if(!response)
-        {
-            await set_quests();
-        }
+        if(!response) await set_quests();
 
         return response;
     }
