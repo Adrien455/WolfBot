@@ -85,7 +85,7 @@ node app.js
 
 Restricted to players included in `DEVS_IDS`.
 
-- `!balance <value>` -> Adds specified amount of gold to the balance of a member (in localdata only). Negative values are accepted. Default value is 500 gold.
+- `!give <value>` -> Adds specified amount of gold to the balance of a member (in localdata only). Negative values are accepted. Default value is 500 gold.
 
 - `!log` -> Logs the database of members.
 
