@@ -1,7 +1,6 @@
 const fs = require("fs");
 const path = require("path");
 
-const { send_message } = require('../api/message');
 const { get_members } = require('../services/clan');
 const { DEVS_IDS } = require('../config');
 
@@ -24,7 +23,7 @@ async function execute(command, player_id, args)    // checks perms
 {
     if (command.dev && !DEVS_IDS.includes(player_id))
     {
-        throw new Error("Error: You are not allowed to use this command");
+        throw new Error("Authorization Error:\nYou are not allowed to use this command");
     }
 
     if (command.strict)
@@ -33,7 +32,7 @@ async function execute(command, player_id, args)    // checks perms
 
         if(!member.coleader && !member.leader)
         {
-            throw new Error("Error: You are not allowed to use this command");
+            throw new Error("Authorization Error:\nYou are not allowed to use this command");
         }
     }
 
@@ -50,16 +49,7 @@ async function command_handler(message)
 
     if(!command)
     {
-        try
-        {
-            await send_message("Error: unknown command");
-        }
-        catch(err)
-        {
-            throw new Error(err.message);
-        }
-
-        return;
+        throw new Error("Input Error: Unknown command.")
     }
 
     try

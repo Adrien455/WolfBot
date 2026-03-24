@@ -23,7 +23,7 @@ module.exports =
                 is_gold = false;
                 break;
             default:
-                throw new Error("Error: Wrong argument. Undefined, gold and gems are accepted.");
+                throw new Error("Input Error: Wrong argument.\nUndefined, gold and gems are accepted.");
         }
 
         let winner;

@@ -1,5 +1,5 @@
 const { get } = require('./api/requests');
-const { get_last_messages } = require('./api/message');
+const { get_last_messages, send_message } = require('./api/message');
 
 const { CLAN_ID } = require('./config');
 
@@ -54,6 +54,15 @@ function create_poller({fetch, get_date, handler, filter = () => true})
                         catch(err)
                         {
                             console.log(err.message);
+
+                            try // pas ouf ptet faire un retry genre max 3
+                            {
+                                await send_message(err.message);
+                            }
+                            catch(err)
+                            {
+                                console.log(err.message);
+                            }
                         }
                     }
                 }

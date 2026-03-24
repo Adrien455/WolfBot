@@ -11,7 +11,7 @@ module.exports =
     {
         if (!/^-?\d+$/.test(value))
         {
-            return "Error: Wrong argument. Please enter integer.";
+            return "Input Error: Wrong argument.\nPlease enter integer.";
         }
 
         const parsed = Number(value);

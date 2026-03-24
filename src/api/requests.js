@@ -7,16 +7,16 @@ function get_error_message(err)
     if(err.response?.body?.message)
     {
         log_api_errors();
-        return err.response.body.message;
+        return `Game Error: ${err.response.body.message}`;
     }
 
     if(err.code)
     {
         log_network_errors();
-        return err.code;
+        return `Network Error: ${err.code}`;
     }
 
-    return "Unknown error";
+    return "Unknown Error";
 }
 
 async function post(endpoint, body)
@@ -38,7 +38,7 @@ async function post(endpoint, body)
     }
     catch(err)
     {
-        throw new Error(`Error: ${get_error_message(err)}`);
+        throw new Error(get_error_message(err));
     }
 }
 
@@ -61,7 +61,7 @@ async function put(endpoint, body)
     }
     catch(err)
     {
-        throw new Error(`Error: ${get_error_message(err)}`);
+        throw new Error(get_error_message(err));
     }
 }
 
@@ -83,7 +83,7 @@ async function get(endpoint)
     }
     catch(err)
     {
-        throw new Error(`Error: ${get_error_message(err)}`);
+        throw new Error(get_error_message(err));
     }
 }
 
