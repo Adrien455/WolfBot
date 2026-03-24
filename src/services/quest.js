@@ -21,6 +21,11 @@ function set_required(value)
     REQUIRED = value;
 }
 
+function get_required()
+{
+    return REQUIRED;
+}
+
 function update_participating()
 {
     const members = get_members();
@@ -98,4 +103,4 @@ async function choose_quest(is_gold)
     return max_id;
 }
 
-module.exports = { set_quests, get_quests, choose_quest, set_required, update_participating, apply_updates };
+module.exports = { set_quests, get_quests, choose_quest, set_required, get_required, update_participating, apply_updates };

@@ -65,6 +65,8 @@ node app.js
 
 - `!savings` → Returns current savings of the player.
 
+- `!price` → Returns required amount of gold / gems to participate.
+
 ### Restricted
 
 Restricted to leader and coleaders.
@@ -84,7 +86,7 @@ Restricted to leader and coleaders.
 
 - `!extend` → Extends given time for a quest stage.
 
-- `!require <value>` → Change the gold required to participate. Default value is 500 gold.
+- `!require <value>` → Change the gold / gems required to participate to a quest. Default value is 500.
 
 ## Debugging Commands :
 
