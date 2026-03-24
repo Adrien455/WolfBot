@@ -34,55 +34,37 @@ function get_required()
     return REQUIRED;
 }
 
-function update_participating()
+async function update_participating()
 {
     const members = get_members();
 
-    const updates = [];
-
-    for(const [player_id, member] of members.entries())
+    for (const [player_id, member] of members.entries())
     {
         const is_participating = member.balance >= REQUIRED;
 
-        if (is_participating)
-        {
-            updates.push({
-                player_id,
-                payment: -REQUIRED
-            });
-        }
-
-        if (member.participating !== is_participating) 
-        {
-            updates.push({
-                player_id,
-                participating: is_participating
-            });
-        }
-    }
-
-    return updates;
-}
-
-async function apply_updates(updates)
-{
-    for(const update of updates)
-    {
-        if(update.payment)
-        {
-            update_balance(update.player_id, update.payment);
-        }
-
-        if(update.participating !== undefined)
+        if (member.quest !== is_participating) 
         {
             try
             {
-                await update_status(update.player_id, update.participating);
+                await update_status(player_id, is_participating);
             }
             catch(err)
             {
                 throw new Error(err.message);
             }
+        }
+    }
+}
+
+async function safe_update_balance()
+{
+    const members = get_members();
+
+    for (const [player_id, member] of members.entries())
+    {
+        if (member.participating)
+        {
+            update_balance(player_id, -REQUIRED);
         }
     }
 }
@@ -127,4 +109,4 @@ async function choose_quest(is_gold)
     return max_id;
 }
 
-module.exports = { set_quests, get_quests, choose_quest, set_required, get_required, update_participating, apply_updates };
+module.exports = { set_quests, get_quests, choose_quest, set_required, get_required, update_participating, safe_update_balance };

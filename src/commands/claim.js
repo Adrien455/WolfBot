@@ -1,6 +1,6 @@
 const {  post } = require('../api/requests');
 const { CLAN_ID } = require('../config');
-const { choose_quest, update_participating, apply_updates } = require('../services/quest');
+const { choose_quest, update_participating, safe_update_balance } = require('../services/quest');
 
 module.exports =
 {
@@ -39,7 +39,15 @@ module.exports =
 
         console.log("Winner:", winner);
 
-        const updates = update_participating();
+        try
+        {
+            await update_participating();
+        }
+        catch(err)
+        {
+            throw new Error(err.message);
+        }
+
         let response;
 
         try
@@ -51,14 +59,7 @@ module.exports =
             throw new Error(`Failed to claim quest.\n${err.message}`);
         }
 
-        try
-        {
-            apply_updates(updates);
-        }
-        catch(err)
-        {
-            throw new Error(err.message);
-        }
+        safe_update_balance();
 
         return response;
     }
