@@ -23,18 +23,43 @@ module.exports =
                 is_gold = false;
                 break;
             default:
-                return "Error: Wrong argument. Undefined, gold and gems are accepted.";
+                throw new Error("Error: Wrong argument. Undefined, gold and gems are accepted.");
         }
 
-        const winner = await choose_quest(is_gold);
+        let winner;
+
+        try
+        {
+            winner = await choose_quest(is_gold);
+        }
+        catch(err)
+        {
+            throw new Error(err.message);
+        }
+
         console.log("Winner:", winner);
 
         const updates = update_participating();
-     
-        const response = await post(`clans/${CLAN_ID}/quests/claim`, { "questId": winner });
+        let response;
 
-        if(winner && !response) apply_updates(updates);
-        
+        try
+        {
+            response = await post(`clans/${CLAN_ID}/quests/claim`, { "questId": winner });
+        }
+        catch(err)
+        {
+            throw new Error(`Failed to claim quest.\n${err.message}`);
+        }
+
+        try
+        {
+            apply_updates(updates);
+        }
+        catch(err)
+        {
+            throw new Error(err.message);
+        }
+
         return response;
     }
 };

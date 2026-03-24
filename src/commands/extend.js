@@ -10,6 +10,15 @@ module.exports =
 
     async execute()
     {
-        return await post(`clans/${CLAN_ID}/quests/active/claimTime`);  // doesnt work needs to be tested when a quest is active
+        try
+        {
+            return await post(`clans/${CLAN_ID}/quests/active/claimTime`);  
+            // doesnt work needs to be tested when a quest is active
+        }
+        catch(err)
+        {
+            throw new Error(`Failed to claim additional time.\n${err.message}`);
+        }
+        
     }
 };

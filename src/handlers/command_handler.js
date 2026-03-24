@@ -24,7 +24,7 @@ async function execute(command, player_id, args)    // checks perms
 {
     if (command.dev && !DEVS_IDS.includes(player_id))
     {
-        return "Error: You are not allowed to use this command";
+        throw new Error("Error: You are not allowed to use this command");
     }
 
     if (command.strict)
@@ -33,7 +33,7 @@ async function execute(command, player_id, args)    // checks perms
 
         if(!member.coleader && !member.leader)
         {
-            return "Error: You are not allowed to use this command";
+            throw new Error("Error: You are not allowed to use this command");
         }
     }
 
@@ -50,18 +50,26 @@ async function command_handler(message)
 
     if(!command)
     {
-        await send_message("Error: unknown command");
-        console.log("unknown command");
+        try
+        {
+            await send_message("Error: unknown command");
+        }
+        catch(err)
+        {
+            throw new Error(err.message);
+        }
+
         return;
     }
 
-    const response = await execute(command, player_id, args);
-    console.log("Response:", response);
-
-    if(typeof response === "string" && response.startsWith("Error"))
+    try
     {
-        await send_message(response);    // might hide initial error if sendMessage fails (chat clan only)
-    }   
+        await execute(command, player_id, args);
+    }
+    catch(err)
+    {
+        throw new Error(err.message);
+    } 
 }
 
 module.exports = command_handler;

@@ -9,7 +9,14 @@ function start_cron()
 {
     task = cron.schedule(every_monday, async () =>
     { 
-        await set_quests(); 
+        try
+        {
+            await set_quests();
+        }
+        catch(err)
+        {
+            throw new Error(err.message);
+        }
     },
     {
         timezone: 'UTC'

@@ -10,6 +10,14 @@ module.exports =
 
     async execute()
     {
-        return await post(`clans/${CLAN_ID}/quests/active/skipWaintingTime`);  // doesnt work needs to be tested when a quest is active
+        try
+        {
+            return await post(`clans/${CLAN_ID}/quests/active/skipWaintingTime`);
+            // doesnt work needs to be tested when a quest is active
+        }
+        catch(err)
+        {
+            throw new Error(`Failed skip waiting time.\n${err.message}`);
+        }
     }
 };

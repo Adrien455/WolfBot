@@ -11,10 +11,25 @@ module.exports =
 
     async execute()
     {
-        const response = await post(`clans/${CLAN_ID}/quests/available/shuffle`);
+        let response;
 
-        if(!response) await set_quests();
+        try
+        {   
+            response = await post(`clans/${CLAN_ID}/quests/available/shuffle`);
+        }
+        catch(err)
+        {
+            throw new Error(`Failed to shuffle quests.\n${err.message}`);
+        }
 
-        return response;
+        try
+        {
+            await set_quests();
+            return response;
+        }
+        catch(err)
+        {
+            throw new Error(err.message);
+        }
     }
 };

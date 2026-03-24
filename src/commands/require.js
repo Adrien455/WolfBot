@@ -12,7 +12,7 @@ module.exports =
     {
         if (!/^\d+$/.test(value))
         {
-            return "Error: Wrong argument. Please enter positive integer.";
+            throw new Error("Error: Wrong argument. Please enter positive integer.");
         }
 
         const parsed = Number(value, 10);

@@ -77,7 +77,7 @@ Restricted to leader and coleaders.
     - In case of tie the **last encountered** one will be selected.
     - Does not take votes for shuffle into account. 
     - Updates member participation status based on contribution. 
-    - Required amount : Initialized at **500 gold**.
+    - Required amount : Initialized at **500**.
     - Contributions are tracked from bot startup only.
 
 - `!shuffle` → Shuffles available quests.

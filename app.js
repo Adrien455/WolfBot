@@ -22,4 +22,8 @@ async function start()
   run_pollers(starting_date);
 }
 
-start();
+start().catch(err =>
+{
+  console.error(`Critical error at start.\n${err.message}`);
+  process.exit(1);
+});

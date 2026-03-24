@@ -21,14 +21,19 @@ function create_poller({fetch, get_date, handler, filter = () => true})
 
         while(get_running())
         {
-            const events = await fetch();
-            let activity = false;
+            let events;
 
-            if(!events || events.length == 0)   // very unlikely
+            try
             {
-                await sleep(delay);
+                events = await fetch();
+            }
+            catch(err)
+            {
+                console.log(err.message);
                 continue;
             }
+
+            let activity = false;
 
             for(let i = events.length - 1; i >= 0; i--)
             {
@@ -42,7 +47,14 @@ function create_poller({fetch, get_date, handler, filter = () => true})
 
                     if(filter(event))
                     {
-                        await handler(event);
+                        try
+                        {
+                            await handler(event);
+                        }
+                        catch(err)
+                        {
+                            console.log(err.message);
+                        }
                     }
                 }
             }
@@ -50,6 +62,10 @@ function create_poller({fetch, get_date, handler, filter = () => true})
             if(!activity)
             {
                 delay = Math.min(delay + 300, 5000);
+            }
+            else
+            {
+                delay = 1000;
             }
 
             await sleep(delay);
@@ -78,9 +94,9 @@ const ledger_poller = create_poller({
 
 async function run_pollers(starting_date)
 {
-    messages_poller(starting_date, 2000);
-    logs_poller(starting_date, 2000);
-    ledger_poller(starting_date, 2000);
+    messages_poller(starting_date, 1000);
+    logs_poller(starting_date, 1000);
+    ledger_poller(starting_date, 1000);
 }
 
 module.exports = run_pollers;

@@ -10,7 +10,22 @@ module.exports =
 
     async execute()
     {
-       set_members();   // THIS WILL RESET MEMBERS BALANCES !!!!!
-       set_quests();
+        try
+        {
+            await set_members();   // THIS WILL RESET MEMBERS BALANCES !!!!!
+        }
+        catch(err)
+        {
+            throw new Error(`Failed to set members.\n${err.message}`);
+        }
+
+        try
+        {
+            await set_quests();
+        }
+        catch(err)
+        {
+            throw new Error(err.message);
+        }
     }
 };

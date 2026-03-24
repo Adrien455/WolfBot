@@ -1,6 +1,23 @@
 const superagent = require('superagent');
 const { API_KEY, BASE_URL } = require('../config');
-const { log_request, log_processed } = require('../utils/monitoring');
+const { log_request, log_processed, log_api_errors, log_network_errors } = require('../utils/monitoring');
+
+function get_error_message(err)
+{
+    if(err.response?.body?.message)
+    {
+        log_api_errors();
+        return err.response.body.message;
+    }
+
+    if(err.code)
+    {
+        log_network_errors();
+        return err.code;
+    }
+
+    return "Unknown error";
+}
 
 async function post(endpoint, body)
 {
@@ -19,16 +36,9 @@ async function post(endpoint, body)
         log_processed("post");
         return response.body;
     }
-    catch (err)
+    catch(err)
     {
-        const api_message = err.response?.body?.message ?? "Unknown error";
-
-        if(api_message == "Unknown error")
-        {
-            console.log(err);
-        }
-
-        return `Error: ${api_message}`;
+        throw new Error(`Error: ${get_error_message(err)}`);
     }
 }
 
@@ -49,11 +59,9 @@ async function put(endpoint, body)
         log_processed("put");
         return response.body;
     }
-    catch (err)
+    catch(err)
     {
-        const api_message = err.response?.body?.message ?? "Unknown error";
-
-        return `Error: ${api_message}`;
+        throw new Error(`Error: ${get_error_message(err)}`);
     }
 }
 
@@ -73,11 +81,9 @@ async function get(endpoint)
         log_processed("get");
         return response.body;
     }
-    catch (err)
+    catch(err)
     {
-        const api_message = err.response?.body?.message ?? "Unknown error";
-
-        return `Error: ${api_message}`;
+        throw new Error(`Error: ${get_error_message(err)}`);
     }
 }
 

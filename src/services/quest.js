@@ -8,7 +8,15 @@ let REQUIRED = 500;         // set to 500, can be changed via !require
 async function set_quests()
 {
     console.log("Quests set at", new Date());
-    QUESTS = await get(`clans/${CLAN_ID}/quests/available`);
+
+    try
+    {
+        QUESTS = await get(`clans/${CLAN_ID}/quests/available`);
+    }
+    catch(err)
+    {
+        throw new Error(`Failed to fetch quests.\n${err.message}`);
+    }
 }
 
 function get_quests()
@@ -67,15 +75,31 @@ async function apply_updates(updates)
 
         if(update.participating !== undefined)
         {
-            await update_status(update.player_id, update.participating);
+            try
+            {
+                await update_status(update.player_id, update.participating);
+            }
+            catch(err)
+            {
+                throw new Error(err.message);
+            }
         }
     }
 }
 
 async function choose_quest(is_gold)
 {
-    const options = await get(`clans/${CLAN_ID}/quests/votes`);
-    console.log(options);
+    let options;
+
+    try
+    {
+        options = await get(`clans/${CLAN_ID}/quests/votes`);
+    }
+    catch(err)
+    {
+        throw new Error(`Failed to fetch quests votes.\n${err.message}`);
+    }
+
     const votes = options.votes;
 
     const filtered = [];

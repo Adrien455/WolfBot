@@ -39,8 +39,26 @@ async function set_members(saved_members)
     }
     else
     {
-        const clan_info = await get(`clans/${CLAN_ID}/info`);
-        const members = await get(`clans/${CLAN_ID}/members`);
+        let clan_info;
+        let members;
+
+        try
+        {
+            clan_info = await get(`clans/${CLAN_ID}/info`);
+        }
+        catch(err)
+        {
+            throw new Error(`Failed to fetch clan_info\n${err.message}`);
+        }
+        
+        try
+        {
+            members = await get(`clans/${CLAN_ID}/members`);
+        }
+        catch(err)
+        {
+            throw new Error(`Failed to fetch clan members\n${err.message}`);
+        }
 
         members.forEach(member =>
         {
@@ -96,7 +114,15 @@ async function update_status(member_id, is_participating)
     member.participating = is_participating;
 
     const body = { "participateInQuests": is_participating };
-    await put(`clans/${CLAN_ID}/members/${member_id}/participateInQuests`, body);
+
+    try
+    {
+        await put(`clans/${CLAN_ID}/members/${member_id}/participateInQuests`, body);
+    }
+    catch(err)
+    {
+        throw new Error(`Failed to update participating status.\n"${err.message}`);
+    }
 
     schedule_save_members(MEMBERS);
 }
