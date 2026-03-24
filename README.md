@@ -27,7 +27,8 @@ Create an .env file at the repository root and put your personal api key:
 ```env
 API_KEY = "MY_API_KEY"
 ```
-**⚠️ Warning :** This file must stay **confidential**. You can reset it in game's settings in case of accidental push / any leaks.
+**⚠️ Warning :** This file must stay **confidential**.<br>
+You can reset it in game's settings in case of accidental push / any leaks.
 
 ### Config.js :
 
@@ -45,7 +46,7 @@ const DEVS_IDS = [
 You can retrieve IDs using https://api.wolvesville.com/.<br>
 See the [documentation](https://api-docs.wolvesville.com/) for the endpoints.
 
-**⚠️ Warning :** The players included in `DEVS_IDS` have accessed at **debugging commands** that can modify internal data. Only add trusted members.
+**⚠️ Warning :** Players in `DEVS_IDS` have accessed at **debugging commands** that can modify internal data. Only add trusted members.
 
 ## Run bot :
 
@@ -79,6 +80,7 @@ Restricted to leader and coleaders.
     - Updates member participation status based on contribution. 
     - Required amount : Initialized at **500**.
     - Contributions are tracked from bot startup only.
+    - If !claim fails required price will not be deduced.
 
 - `!shuffle` → Shuffles available quests.
 

@@ -6,9 +6,9 @@ async function ledger_handler(transaction)
 
        switch(transaction.type)
        {
-            case "DONATE":
-                update_balance(transaction.playerId, transaction.gold);
-                break;
+              case "DONATE":
+                     update_balance(transaction.playerId, transaction.gold);
+                     break;
        }
 }
 

@@ -9,13 +9,11 @@ async function log_handler(log)
        {
             case "JOIN_REQUEST_ACCEPTED":
                 add_member(log.targetPlayerId, { name: log.targetPlayerUsername });
-                send_message(`Welcome ${log.targetPlayerUsername} !`);
-                break;
+                return send_message(`Welcome ${log.targetPlayerUsername} !`);
 
             case "PLAYER_JOINED":
                 add_member(log.playerId, { name: log.playerUsername });
-                send_message(`Welcome ${log.playerUsername} !`);
-                break;
+                return send_message(`Welcome ${log.playerUsername} !`);
 
             case "PLAYER_LEFT":
                 remove_member(log.playerId);
