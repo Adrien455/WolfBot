@@ -23,6 +23,11 @@ async function post(endpoint, body)
     {
         const api_message = err.response?.body?.message ?? "Unknown error";
 
+        if(api_message == "Unknown error")
+        {
+            console.log(err);
+        }
+
         return `Error: ${api_message}`;
     }
 }

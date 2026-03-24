@@ -3,7 +3,7 @@ const { CLAN_ID } = require('../config');
 const { get_members, update_balance, update_status } = require('../services/clan');
 
 let QUESTS = [];            // available quests
-let REQUIRED = 500;   // set to 500, can be changed via !require
+let REQUIRED = 500;         // set to 500, can be changed via !require
 
 async function set_quests()
 {
@@ -67,21 +67,28 @@ async function apply_updates(updates)
     }
 }
 
-async function choose_quest()
+async function choose_quest(is_gold)
 {
     const options = await get(`clans/${CLAN_ID}/quests/votes`);
+    console.log(options);
     const votes = options.votes;
 
-    const gold_quests = QUESTS
-        .filter(quest => !quest.purchasableWithGems)
-        .map(quest => quest.id);
+    const filtered = [];
+
+    for(const quest of QUESTS)
+    {
+        if(quest.purchasableWithGems !== is_gold)
+        {
+            filtered.push(quest.id);
+        }
+    }
 
     let max_id = null;
     let max_count = -1;
 
     for(const [id, arr] of Object.entries(votes))
     {
-        if(gold_quests.includes(id) && arr.length >= max_count)
+        if(filtered.includes(id) && arr.length >= max_count)
         {
             max_id = id;
             max_count = arr.length;

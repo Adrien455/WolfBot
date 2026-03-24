@@ -9,9 +9,25 @@ module.exports =
     strict: true,
     dev: false,
 
-    async execute()
+    async execute(player_id, type)
     {
-        const winner = await choose_quest();
+        let is_gold;
+
+        switch(type)
+        {
+            case undefined:
+            case "gold":
+                is_gold = true;
+                break;
+            case "gems":
+                is_gold = false;
+                break;
+            default:
+                return "Error: Wrong argument. Undefined, gold and gems are accepted.";
+        }
+
+        const winner = await choose_quest(is_gold);
+        console.log("Winner:", winner);
 
         const updates = update_participating();
      
