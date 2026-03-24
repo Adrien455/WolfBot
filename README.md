@@ -69,8 +69,9 @@ node app.js
 
 Restricted to leader and coleaders.
 
-- `!claim` → 
-    - Selects the most voted gold quest.
+- `!claim <type>` → 
+    - Type can be either gold or gems. Default is gold.
+    - Selects the most voted quest (among the selected type).
     - In case of tie the **last encountered** one will be selected.
     - Does not take votes for shuffle into account. 
     - Updates member participation status based on contribution. 
