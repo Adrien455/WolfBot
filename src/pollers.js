@@ -30,6 +30,7 @@ function create_poller({fetch, get_date, handler, filter = () => true})
             catch(err)
             {
                 console.log(err.message);
+                await sleep(delay);
                 continue;
             }
 

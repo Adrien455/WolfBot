@@ -5,9 +5,7 @@ async function get_last_messages()
 {
     try
     {
-        const data = await get(`clans/${CLAN_ID}/chat`);
-
-        return data;
+        return await get(`clans/${CLAN_ID}/chat`);
     }
     catch(err)
     {
@@ -20,8 +18,7 @@ async function send_message(msg)
     try
     {
         const body = { "message": msg };
-        const data = await post(`clans/${CLAN_ID}/chat`, body);
-        return data;
+        return await post(`clans/${CLAN_ID}/chat`, body);
     }
     catch(err)
     {

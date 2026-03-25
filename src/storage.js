@@ -1,11 +1,13 @@
 const fs = require('fs/promises');
 const path = require('path');
 
+const { get_required } = require('./services/quest'); 
+
 const FILE_PATH = path.join(__dirname, '../data/members.json');
 
 let saveTimeout = null;
 
-async function load_members()
+async function load_data()
 {
     try
     {
@@ -14,7 +16,7 @@ async function load_members()
 
         console.log("Found data.")
 
-        return new Map(parsed);
+        return { required: parsed.required, members: new Map(parsed.members) };
     }
     catch (err)
     {
@@ -33,7 +35,13 @@ async function save(members)
 {
     try
     {
-        const data = JSON.stringify([...members], null, 2);
+        const body = {
+            date: new Date(),
+            required: get_required(),
+            members: [...members]
+        };
+
+        const data = JSON.stringify(body, null, 2);
 
         const tmp = FILE_PATH + ".tmp";
 
@@ -59,7 +67,7 @@ function schedule_save_members(members, delay = 1000)
     }, delay);
 }
 
-async function flush(members)   // flush timeouts if any to force save (unused)
+async function flush(members)   // flush timeouts if any to force save
 {
     if(saveTimeout)
     {
@@ -70,7 +78,7 @@ async function flush(members)   // flush timeouts if any to force save (unused)
 }
 
 module.exports = {
-    load_members,
+    load_data,
     schedule_save_members,
     flush
 };

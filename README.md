@@ -131,6 +131,7 @@ Restricted to players included in `DEVS_IDS`.
     │   ├── extend.js
     │   ├── greet.js
     │   ├── require.js
+    │   ├── price.js
     │   ├── savings.js
     │   ├── shuffle.js
     │   └── skip.js

@@ -1,6 +1,5 @@
 const { get } = require('../api/requests');
 const { CLAN_ID } = require('../config');
-const { get_members, update_balance, update_status } = require('../services/clan');
 
 let QUESTS = [];            // available quests
 let REQUIRED = 500;         // set to 500, can be changed via !require
@@ -32,41 +31,6 @@ function set_required(value)
 function get_required()
 {
     return REQUIRED;
-}
-
-async function update_participating()
-{
-    const members = get_members();
-
-    for (const [player_id, member] of members.entries())
-    {
-        const is_participating = member.balance >= REQUIRED;
-
-        if (member.quest !== is_participating) 
-        {
-            try
-            {
-                await update_status(player_id, is_participating);
-            }
-            catch(err)
-            {
-                throw new Error(err.message);
-            }
-        }
-    }
-}
-
-async function safe_update_balance()
-{
-    const members = get_members();
-
-    for (const [player_id, member] of members.entries())
-    {
-        if (member.participating)
-        {
-            update_balance(player_id, -REQUIRED);
-        }
-    }
 }
 
 async function choose_quest(is_gold)
@@ -109,4 +73,4 @@ async function choose_quest(is_gold)
     return max_id;
 }
 
-module.exports = { set_quests, get_quests, choose_quest, set_required, get_required, update_participating, safe_update_balance };
+module.exports = { set_quests, get_quests, choose_quest, set_required, get_required };

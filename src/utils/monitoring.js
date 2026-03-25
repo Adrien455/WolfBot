@@ -1,12 +1,11 @@
 const stats = {
   requests: 0,
   total_latency: 0,
-  api_errors: 0,
-  network_errors: 0,
+  errors: 0,
   processed: {
-    get: 0,
-    post: 0,
-    put: 0
+    GET: 0,
+    POST: 0,
+    PUT: 0
   }
 };
 
@@ -21,14 +20,9 @@ function log_processed(type)
   stats.processed[type]++;
 }
 
-function log_api_errors()
+function log_errors()
 {
-  stats.api_errors++;
-}
-
-function log_network_errors()
-{
-  stats.network_errors++;
+  stats.http_errors++;
 }
 
 function report()
@@ -40,8 +34,7 @@ function report()
   console.log({
     req_per_sec: (stats.requests / 10).toFixed(2),
     avg_latency: avg_latency + " ms",
-    api_errors: stats.api_errors,
-    network_errors: stats.network_errors,  // not sure of the name
+    errors: stats.errors,
     processed: stats.processed
   });
 
@@ -49,15 +42,13 @@ function report()
 
   stats.requests = 0;
   stats.total_latency = 0;
-  stats.processed = { get: 0, post: 0, put: 0 };
-  stats.api_errors = 0;
-  stats.network_errors = 0;
+  stats.processed = { GET: 0, POST: 0, PUT: 0 };
+  stats.errors = 0;
 }
 
 module.exports = {
   log_request,
   log_processed,
-  log_api_errors,
-  log_network_errors,
+  log_errors,
   report
 };

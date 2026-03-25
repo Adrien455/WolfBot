@@ -15,7 +15,7 @@ function start_cron()
         }
         catch(err)
         {
-            throw new Error(err.message);
+            console.log(err.message);
         }
     },
     {

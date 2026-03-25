@@ -1,4 +1,12 @@
 {
+  "name": "wolfbot",
+  "version": "1.0.0",
+  "description": "Wolvesville clan bot",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "node --watch app.js"
+  },
   "dependencies": {
     "dotenv": "^17.3.1",
     "node-cron": "^4.2.1",

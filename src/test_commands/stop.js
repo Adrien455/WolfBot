@@ -12,7 +12,7 @@ module.exports =
 
     async execute()
     {
-        flush(get_members());
+        await flush(get_members());
         stop_cron();
         stop_pollers();
     }

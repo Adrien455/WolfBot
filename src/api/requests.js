@@ -1,13 +1,31 @@
 const superagent = require('superagent');
 const { API_KEY, BASE_URL } = require('../config');
-const { log_request, log_processed, log_api_errors, log_network_errors } = require('../utils/monitoring');
+const { log_request, log_processed, log_errors } = require('../utils/monitoring');
 
 function get_error_message(err)
 {
-    if(err.response?.body?.message)
+    const status = err.status;
+    log_errors();
+
+    switch(true)
     {
-        log_api_errors();
-        return `Game Error: ${err.response.body.message}`;
+        case (status == 429):
+            return `Rate limit reached: ${err.response?.body?.message}`;
+
+        case (status == 400):
+            return `Bad request: ${err.response?.body?.message}`;
+
+        case (status == 401):
+            return `Auth Error: ${err.response?.body?.message}`;
+
+        case (status == 403):
+            return `Forbidden request: ${err.response?.body?.message}`;
+
+        case (status == 404):
+            return `HTTP Error: ${err.response?.body?.message}`;
+
+        case (status >= 500):
+            return `Server Error: ${err.response?.body?.message}`;
     }
 
     if(err.code)
@@ -16,7 +34,7 @@ function get_error_message(err)
         return `Network Error: ${err.code}`;
     }
 
-    return "Unknown Error";
+    return `Unknown Error: ${err.message ?? err}`;
 }
 
 async function request(method, endpoint, body)

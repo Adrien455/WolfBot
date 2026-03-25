@@ -15,7 +15,7 @@ module.exports =
             throw new Error("Input Error: Wrong argument.\nPlease enter positive integer.");
         }
 
-        const parsed = Number(value, 10);
+        const parsed = Number(value);
 
         set_required(parsed);
         return await send_message(`Required gold set at ${parsed}`);

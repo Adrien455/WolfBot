@@ -11,11 +11,11 @@ module.exports =
     {
         if (!/^-?\d+$/.test(value))
         {
-            return "Input Error: Wrong argument.\nPlease enter integer.";
+            throw new Error("Input Error: Wrong argument.\nPlease enter integer.");
         }
 
         const parsed = Number(value);
 
-        update_balance(player_id, parsed, 10);
+        update_balance(player_id, parsed);
     }
 };
