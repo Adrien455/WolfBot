@@ -1,7 +1,6 @@
 const { stop_pollers } = require('../controller');
 const { stop_cron } = require('../utils/cron');
-const { flush } = require('../storage');
-const { get_members } = require('../services/clan');
+const { flush } = require('../storage/storage');
 
 module.exports =
 {
@@ -12,8 +11,8 @@ module.exports =
 
     async execute()
     {
-        await flush(get_members());
-        stop_cron();
         stop_pollers();
+        stop_cron();
+        await flush();
     }
 };

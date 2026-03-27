@@ -1,4 +1,4 @@
-const { get_members } = require('../services/clan');
+const state = require('../storage/state');
 
 module.exports =
 {
@@ -9,6 +9,6 @@ module.exports =
 
     async execute()
     {
-        console.log(get_members());
+        console.log(state);
     }
 };

@@ -8,15 +8,8 @@ let task;
 function start_cron()
 {
     task = cron.schedule(every_monday, async () =>
-    { 
-        try
-        {
-            await set_quests();
-        }
-        catch(err)
-        {
-            console.log(err.message);
-        }
+    {     
+        await set_quests(); 
     },
     {
         timezone: 'UTC'

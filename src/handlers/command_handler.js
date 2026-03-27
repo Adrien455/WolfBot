@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const { get_members } = require('../services/clan');
+const state = require('../storage/state');
 const { DEVS_IDS } = require('../config');
 
 const commands = new Map();
@@ -28,7 +28,7 @@ async function execute(command, player_id, args)    // checks perms
 
     if (command.strict)
     {
-        const member = get_members().get(player_id);
+        const member = state.members.get(player_id);
 
         if(!member.coleader && !member.leader)
         {
@@ -52,14 +52,8 @@ async function command_handler(message)
         throw new Error("Input Error: Unknown command.")
     }
 
-    try
-    {
-        await execute(command, player_id, args);
-    }
-    catch(err)
-    {
-        throw new Error(err.message);
-    } 
+    await execute(command, player_id, args);
+    
 }
 
 module.exports = command_handler;

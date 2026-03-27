@@ -22,7 +22,7 @@ function log_processed(type)
 
 function log_errors()
 {
-  stats.http_errors++;
+  stats.errors++;
 }
 
 function report()

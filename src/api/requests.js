@@ -10,16 +10,16 @@ function get_error_message(err)
     switch(true)
     {
         case (status == 429):
-            return `Rate limit reached: ${err.response?.body?.message}`;
+            return `Rate limit reached: ${err.response?.body?.message}`;    // not tested
 
         case (status == 400):
             return `Bad request: ${err.response?.body?.message}`;
 
         case (status == 401):
-            return `Auth Error: ${err.response?.body?.message}`;
+            return `Auth Error: ${err.message}\nYour api key may be wrong.`;
 
         case (status == 403):
-            return `Forbidden request: ${err.response?.body?.message}`;
+            return `Forbidden request: ${err.response?.body?.message ?? err.message}`;  // not tested
 
         case (status == 404):
             return `HTTP Error: ${err.response?.body?.message}`;
@@ -30,7 +30,6 @@ function get_error_message(err)
 
     if(err.code)
     {
-        log_network_errors();
         return `Network Error: ${err.code}`;
     }
 
@@ -46,7 +45,8 @@ async function request(method, endpoint, body)
         let request = superagent(method, `${BASE_URL}/${endpoint}`)
             .set('Authorization', `Bot ${API_KEY}`)
             .set('Accept', 'application/json')
-            .set('Content-Type', 'application/json');
+            .set('Content-Type', 'application/json')
+            .timeout({ response: 5000, deadline: 10000 });
 
         if (body)
         {

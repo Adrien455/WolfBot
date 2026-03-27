@@ -1,5 +1,5 @@
 const { send_message } = require('../api/message');
-const { get_required } = require('../services/quest');
+const state = require('../storage/state');
 
 module.exports =
 {
@@ -10,6 +10,6 @@ module.exports =
 
     async execute()
     {
-        return await send_message(`Required for next quest: ${get_required()}`);
+        return await send_message(`Required for next quest: ${state.required}`);
     }
 };

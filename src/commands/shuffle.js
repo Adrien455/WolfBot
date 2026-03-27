@@ -22,14 +22,7 @@ module.exports =
             throw new Error(`Failed to shuffle quests.\n${err.message}`);
         }
 
-        try
-        {
-            await set_quests();
-            return response;
-        }
-        catch(err)
-        {
-            throw new Error(err.message);
-        }
+        await set_quests();
+        return response;     
     }
 };

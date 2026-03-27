@@ -1,8 +1,7 @@
 const { CLAN_ID, DEVS_IDS, OWNER_ID } = require('../config');
 const { get, put } = require('../api/requests');
-const { schedule_save_members } = require('../storage');
-
-let MEMBERS = new Map();    // keep track of each member information
+const { schedule_save } = require('../storage/storage');
+const state = require('../storage/state');
 
 function create_member(overrides = {})
 {
@@ -20,24 +19,27 @@ function create_member(overrides = {})
 
 function add_member(member_id, overrides = {})
 {
-    MEMBERS.set(member_id, create_member(
+    state.members.set(member_id, create_member(
     {
         ...overrides,
         owner: member_id === OWNER_ID,
         dev: DEVS_IDS.includes(member_id)   // owner and dev cant be overriden change config.js for that purpose
     }));
+
+    schedule_save();
 }
 
-async function load_members(saved_members)
+function load_members(saved_members)
 {
-    for (const [player_id, member] of saved_members.entries())
-    {
-        MEMBERS.set(player_id, member);
-    }
+    state.members = saved_members;
+
+    schedule_save();
 }   
 
 async function set_members()
 {
+    state.members = new Map();
+
     let clan_info;
     let members;
 
@@ -68,49 +70,47 @@ async function set_members()
             coleader: member.isCoLeader,
         });
     });
-
-    schedule_save_members(MEMBERS);
 }
 
 function remove_member(member_id)
 {
-    MEMBERS.delete(member_id);
-    schedule_save_members(MEMBERS);
+    state.members.delete(member_id);
+    schedule_save();
 }
 
 function change_leader(member_id, leader_id)
 {
-    const former = MEMBERS.get(leader_id);
+    const former = state.members.get(leader_id);
     former.leader = false;
 
-    const leader = MEMBERS.get(member_id);
+    const leader = state.members.get(member_id);
     leader.leader = true;
     leader.coleader = false;
 
-    schedule_save_members(MEMBERS);
+    schedule_save();
 }
 
 function promote(member_id)
 {
-    const coleader = MEMBERS.get(member_id);
+    const coleader = state.members.get(member_id);
     coleader.coleader = true;
 
-    schedule_save_members(MEMBERS);
+    schedule_save();
 }
 
 function demote(coleader_id)
 {
-    const coleader = MEMBERS.get(coleader_id);
+    const coleader = state.members.get(coleader_id);
     coleader.coleader = false;
 
-    schedule_save_members(MEMBERS);
+    schedule_save();
 }
 
-async function update_participating(required)
+async function update_participating()
 {
-    for (const [member_id, member] of MEMBERS.entries())
+    for (const [member_id, member] of state.members.entries())
     {
-        const is_participating = member.balance >= required;
+        const is_participating = member.balance >= state.required;
 
         if (member.participating !== is_participating) 
         {
@@ -127,36 +127,33 @@ async function update_participating(required)
         }
     }
 
-    schedule_save_members(MEMBERS);
+    schedule_save();
 }
 
-function update_balances(amount)
+function update_balances()
 {
-    for (const [player_id, member] of MEMBERS.entries())
+    for (const [player_id, member] of state.members.entries())
     {
         if(member.participating)
         {
-            member.balance -= amount;
+            member.balance -= state.required;
         }
     }
 
-    schedule_save_members(MEMBERS);
+    schedule_save();
 }
 
 function update_balance(member_id, amount)
 {
-    const member = MEMBERS.get(member_id);
+    const member = state.members.get(member_id);
     member.balance += amount;
+
+    schedule_save();
 }
 
-function get_members()
-{
-    return MEMBERS;
-}
 
 module.exports = { 
     set_members,
-    get_members,
     change_leader,
     promote,
     demote,

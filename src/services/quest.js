@@ -1,16 +1,16 @@
 const { get } = require('../api/requests');
 const { CLAN_ID } = require('../config');
+const { schedule_save } = require('../storage/storage');
+const state = require('../storage/state');
 
 let QUESTS = [];            // available quests
-let REQUIRED = 500;         // set to 500, can be changed via !require
 
 async function set_quests()
 {
-    console.log("Quests set at", new Date());
-
     try
     {
         QUESTS = await get(`clans/${CLAN_ID}/quests/available`);
+        console.log("Quests set at", new Date());
     }
     catch(err)
     {
@@ -23,14 +23,18 @@ function get_quests()
     return QUESTS;
 }
 
-function set_required(value)
+function load_required(value)
 {
-    REQUIRED = value;
+    state.required = value;
+
+    schedule_save();
 }
 
-function get_required()
+function set_required(value = 500)
 {
-    return REQUIRED;
+    state.required = value;
+
+    schedule_save();
 }
 
 async function choose_quest(is_gold)
@@ -73,4 +77,10 @@ async function choose_quest(is_gold)
     return max_id;
 }
 
-module.exports = { set_quests, get_quests, choose_quest, set_required, get_required };
+module.exports = { 
+    set_quests, 
+    get_quests, 
+    choose_quest, 
+    set_required, 
+    load_required 
+};

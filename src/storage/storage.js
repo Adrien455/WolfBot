@@ -1,11 +1,12 @@
+const state = require('./state');
+
 const fs = require('fs/promises');
 const path = require('path');
 
-const { get_required } = require('./services/quest'); 
-
-const FILE_PATH = path.join(__dirname, '../data/members.json');
+const FILE_PATH = path.join(__dirname, '../../data/members.json');
 
 let saveTimeout = null;
+let queue = Promise.resolve();  // queue of promises
 
 async function load_data()
 {
@@ -23,39 +24,48 @@ async function load_data()
         if (err.code === "ENOENT")
         {
             console.log("No previous data found.");
-            return undefined;
+            return { required: 500, members: new Map() };
         }
-
-        console.error("Load error:", err);
-        return undefined;
+        console.log("Failed to load. Bad format."); // crash
     }
 }
 
-async function save(members)
+async function save()
 {
     try
     {
         const body = {
             date: new Date(),
-            required: get_required(),
-            members: [...members]
+            required: state.required,
+            members: [...state.members]
         };
 
-        const data = JSON.stringify(body, null, 2);
-
+        const saved = JSON.stringify(body, null, 2);
         const tmp = FILE_PATH + ".tmp";
 
-        await fs.writeFile(tmp, data);
+        await fs.writeFile(tmp, saved);
         await fs.rename(tmp, FILE_PATH);
 
     }
     catch (err)
     {
-        console.error("Save error:", err.code);
+        console.error("Save error:", err.code); // add retry or prevent the !stop
     }
 }
 
-function schedule_save_members(members, delay = 1000)
+function sequenced_save()
+{
+    queue = queue
+        .then(() => save())
+        .catch(err => {
+            console.log("Queue error:", err.code);
+            return Promise.resolve();
+        });
+
+    return queue;   // flush will wait for the whole queue to be resolved
+}
+
+function schedule_save(delay = 1000)
 {
     if(saveTimeout) // if save is waiting to execute reset timeout
     {
@@ -63,22 +73,22 @@ function schedule_save_members(members, delay = 1000)
     }
 
     saveTimeout = setTimeout(() => {
-        save(members);
+        sequenced_save();
     }, delay);
 }
 
-async function flush(members)   // flush timeouts if any to force save
+async function flush()   // flush timeouts if any to force save
 {
     if(saveTimeout)
     {
         clearTimeout(saveTimeout);
     }
 
-    await save(members);
+    await sequenced_save();
 }
 
 module.exports = {
     load_data,
-    schedule_save_members,
+    schedule_save,
     flush
 };

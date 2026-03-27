@@ -19,13 +19,6 @@ module.exports =
             throw new Error(`Failed to set members.\n${err.message}`);
         }
 
-        try
-        {
-            await set_quests();
-        }
-        catch(err)
-        {
-            throw new Error(err.message);
-        }
+        await set_quests();
     }
 };

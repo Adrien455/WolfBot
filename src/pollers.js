@@ -11,6 +11,8 @@ const { get_running } = require('./controller');
 const sleep = require('./utils/sleep');
 
 const PREFIX = "!";
+const POLL_MAX_DELAY = 5000;
+const POLL_MIN_DELAY = 500;
 
 function create_poller({fetch, get_date, handler, filter = () => true})
 {
@@ -71,11 +73,11 @@ function create_poller({fetch, get_date, handler, filter = () => true})
 
             if(!activity)
             {
-                delay = Math.min(delay + 300, 5000);
+                delay = Math.min(delay + 300, POLL_MAX_DELAY);
             }
             else
             {
-                delay = 1000;
+                delay = POLL_MIN_DELAY;
             }
 
             await sleep(delay);
@@ -104,9 +106,9 @@ const ledger_poller = create_poller({
 
 async function run_pollers(starting_date)
 {
-    messages_poller(starting_date, 1000);
-    logs_poller(starting_date, 1000);
-    ledger_poller(starting_date, 1000);
+    messages_poller(starting_date, POLL_MIN_DELAY);
+    logs_poller(starting_date, POLL_MIN_DELAY);
+    ledger_poller(starting_date, POLL_MIN_DELAY);
 }
 
 module.exports = run_pollers;
