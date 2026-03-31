@@ -1,5 +1,5 @@
 const state = require('./state');
-
+ 
 const fs = require('fs/promises');
 const path = require('path');
 
@@ -17,7 +17,12 @@ async function load_data()
 
         console.log("Found data.")
 
-        return { required: parsed.required, members: new Map(parsed.members) };
+        return { 
+            last_log_date: parsed.last_log_date,
+            last_ledger_date: parsed.last_ledger_date,
+            required: parsed.required,
+            members: new Map(parsed.members)
+        };
     }
     catch (err)
     {
@@ -26,7 +31,8 @@ async function load_data()
             console.log("No previous data found.");
             return { required: 500, members: new Map() };
         }
-        console.log("Failed to load. Bad format."); // crash
+        
+        throw new Error("Failed to load. Bad format.");
     }
 }
 
@@ -36,6 +42,8 @@ async function save()
     {
         const body = {
             date: new Date(),
+            last_log_date: state.last_log_date,
+            last_ledger_date: state.last_ledger_date,
             required: state.required,
             members: [...state.members]
         };

@@ -27,14 +27,7 @@ function add_member(member_id, overrides = {})
     }));
 
     schedule_save();
-}
-
-function load_members(saved_members)
-{
-    state.members = saved_members;
-
-    schedule_save();
-}   
+}  
 
 async function set_members()
 {
@@ -162,5 +155,4 @@ module.exports = {
     update_balance,
     update_balances,
     update_participating,
-    load_members
 };

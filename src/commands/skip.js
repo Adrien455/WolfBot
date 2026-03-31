@@ -12,8 +12,7 @@ module.exports =
     {
         try
         {
-            return await post(`clans/${CLAN_ID}/quests/active/skipWaintingTime`);
-            // doesnt work needs to be tested when a quest is active
+            return await post(`clans/${CLAN_ID}/quests/active/skipWaitingTime`);
         }
         catch(err)
         {

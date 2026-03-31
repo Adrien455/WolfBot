@@ -13,7 +13,6 @@ module.exports =
         try
         {
             return await post(`clans/${CLAN_ID}/quests/active/claimTime`);  
-            // doesnt work needs to be tested when a quest is active
         }
         catch(err)
         {

@@ -96,11 +96,11 @@ Restricted to players included in `DEVS_IDS`.
 
 - `!give <value>` → Adds specified amount of gold to the balance of a member (in localdata only). Negative values are accepted. Default value is 500 gold.
 
-- `!log` → Logs the database of members.
+- `!log` → Logs internal data.
 
 - `!clear` → Clear cached quests and members.
 
-- `!stop` → Stops the program. The data of members will be saved locally.
+- `!stop` → Stops the program. Data will be saved locally.
 
 ## Notes
 
@@ -110,52 +110,7 @@ Restricted to players included in `DEVS_IDS`.
 
 - Adding this bot to another clan will have no effect.
 
-- Member data is continuously saved locally. When the bot starts, it loads any existing local data. Note that changes made while the bot is offline (between shutdown and restart) will not be updated. You can use !clear to update it, but it will reset members balances.
-
-## Structure
-
-```bash
-.
-├── README.md
-├── app.js
-├── data
-│   └── 
-├── package-lock.json
-├── package.json
-└── src
-    ├── api
-    │   ├── message.js
-    │   └── requests.js
-    ├── commands
-    │   ├── claim.js
-    │   ├── extend.js
-    │   ├── greet.js
-    │   ├── require.js
-    │   ├── price.js
-    │   ├── savings.js
-    │   ├── shuffle.js
-    │   └── skip.js
-    ├── config.js
-    ├── controller.js
-    ├── handlers
-    │   ├── command_handler.js
-    │   ├── ledger_handler.js
-    │   └── log_handler.js
-    ├── pollers.js
-    ├── services
-    │   ├── clan.js
-    │   └── quest.js
-    ├── storage.js
-    ├── test_commands
-    │   ├── clear.js
-    │   ├── give.js
-    │   ├── log.js
-    │   └── stop.js
-    └── utils
-        ├── cron.js
-        ├── monitoring.js
-        └── sleep.js
-```
+- Member data is continuously saved locally. When the bot starts, it loads any existing local data. Changes occuring during offline state / network shutdown are safely retrieved at restart / reconnection.
 
 ## Author
 

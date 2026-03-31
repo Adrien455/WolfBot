@@ -1,8 +1,9 @@
-const { load_data } = require('./src/storage/storage');
-const { set_members, load_members } = require('./src/services/clan');
-const { set_quests, set_required, load_required } = require('./src/services/quest');
+const { load_data, schedule_save, flush } = require('./src/storage/storage');
+const { set_members } = require('./src/services/clan');
+const { set_quests } = require('./src/services/quest');
 
-const { flush } = require('./src/storage/storage');
+const state = require('./src/storage/state');
+
 const { stop_pollers } = require('./src/controller');
 
 const run_pollers = require('./src/pollers');
@@ -22,16 +23,19 @@ process.on('unhandledRejection', async (reason) =>
 
 async function start()
 {
-  const { required: saved_required, members: saved_members } = await load_data();
+  data = await load_data();
+  starting_date = new Date();
 
-  saved_members.size == 0 ? await set_members() : load_members(saved_members);
-  !saved_required ? set_required() : load_required(saved_required);
-  
+  state.last_log_date = data.last_log_date ? new Date(data.last_log_date) : starting_date;
+  state.last_ledger_date = data.last_ledger_date ? new Date(data.last_ledger_date) : starting_date;
+  state.required = data.required ?? 500;
+  state.members = data.members;
+
+  if(state.members.size == 0) await set_members();
+
   await set_quests();
   
   start_cron();
-
-  let starting_date = new Date();
 
   run_pollers(starting_date);
 }

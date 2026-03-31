@@ -23,7 +23,7 @@ async function execute(command, player_id, args)    // checks perms
 {
     if (command.dev && !DEVS_IDS.includes(player_id))
     {
-        throw new Error("Authorization Error:\nYou are not allowed to use this command");
+        throw new Error("Auth Error:\nYou are not allowed to use this command");
     }
 
     if (command.strict)
@@ -32,7 +32,7 @@ async function execute(command, player_id, args)    // checks perms
 
         if(!member.coleader && !member.leader)
         {
-            throw new Error("Authorization Error:\nYou are not allowed to use this command");
+            throw new Error("Auth Error:\nYou are not allowed to use this command");
         }
     }
 

@@ -6,7 +6,10 @@ const { choose_quest } = require('../services/quest');
 module.exports =
 {
     name: "claim",
-    description: "Claim most voted gold quest. Will take the first one in case of draw. Doesnt take votes for shuffle into account. Use !shuffle for that purpose.",
+    description: `Claim most voted gold quest.
+                Will take the last one in case of draw.
+                Doesnt take votes for shuffle into account.
+                Use !shuffle for that purpose.`,
     strict: true,
     dev: false,
 
@@ -14,17 +17,17 @@ module.exports =
     {
         let is_gold;
 
-        switch(type)
+        if(type === undefined || type === "gold")
         {
-            case undefined:
-            case "gold":
-                is_gold = true;
-                break;
-            case "gems":
-                is_gold = false;
-                break;
-            default:
-                throw new Error("Input Error: Wrong argument.\nUndefined, gold and gems are accepted.");
+            is_gold = true;
+        }
+        else if(type === "gems")
+        {
+            is_gold = false;
+        }
+        else
+        {
+            throw new Error("Input Error: Wrong argument.\nUndefined, gold and gems are accepted.");
         }
 
         const winner = await choose_quest(is_gold);
@@ -43,7 +46,7 @@ module.exports =
             throw new Error(`Failed to claim quest.\n${err.message}`);
         }
 
-        update_balances();
+        update_balances();  
 
         return response;
     }

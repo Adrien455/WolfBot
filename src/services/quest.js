@@ -23,13 +23,6 @@ function get_quests()
     return QUESTS;
 }
 
-function load_required(value)
-{
-    state.required = value;
-
-    schedule_save();
-}
-
 function set_required(value = 500)
 {
     state.required = value;
@@ -81,6 +74,5 @@ module.exports = {
     set_quests, 
     get_quests, 
     choose_quest, 
-    set_required, 
-    load_required 
+    set_required,
 };

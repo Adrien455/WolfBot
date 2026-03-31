@@ -1,6 +1,9 @@
 const superagent = require('superagent');
 const { API_KEY, BASE_URL } = require('../config');
 const { log_request, log_processed, log_errors } = require('../utils/monitoring');
+const sleep = require('../utils/sleep');
+
+const MAX_RETRIES = 3;
 
 function get_error_message(err)
 {
@@ -9,20 +12,23 @@ function get_error_message(err)
 
     switch(true)
     {
-        case (status == 429):
-            return `Rate limit reached: ${err.response?.body?.message}`;    // not tested
+        case (status === 429):   // not tested
+            return `Rate limit reached: ${err.response?.body?.message ?? err.message}`;
 
-        case (status == 400):
+        case (status === 400):
             return `Bad request: ${err.response?.body?.message}`;
 
-        case (status == 401):
-            return `Auth Error: ${err.message}\nYour api key may be wrong.`;
+        case (status === 401):
+            return `Wrong api key or bot not added.\nAuth Error: ${err.message}`;
 
-        case (status == 403):
-            return `Forbidden request: ${err.response?.body?.message ?? err.message}`;  // not tested
+        case (status === 403):   // not tested
+            return `Forbidden request: ${err.response?.body?.message ?? err.message}`;
 
-        case (status == 404):
+        case (status === 404):
             return `HTTP Error: ${err.response?.body?.message}`;
+
+        case (status === 405):
+            return `Method not allowed: ${err.message}`;
 
         case (status >= 500):
             return `Server Error: ${err.response?.body?.message}`;
@@ -33,36 +39,56 @@ function get_error_message(err)
         return `Network Error: ${err.code}`;
     }
 
-    return `Unknown Error: ${err.message ?? err}`;
+    console.log(err);
+    return `Unknown Error: ${err.message}`;
 }
 
 async function request(method, endpoint, body)
 {
     const start = Date.now();
+    let attempts = 0;
+    let delay = 1000;
 
-    try
+    while(true)
     {
-        let request = superagent(method, `${BASE_URL}/${endpoint}`)
-            .set('Authorization', `Bot ${API_KEY}`)
-            .set('Accept', 'application/json')
-            .set('Content-Type', 'application/json')
-            .timeout({ response: 5000, deadline: 10000 });
-
-        if (body)
+        try
         {
-            request = request.send(body);
+            let request = superagent(method, `${BASE_URL}/${endpoint}`)
+                .set('Authorization', `Bot ${API_KEY}`)
+                .set('Accept', 'application/json')
+                .set('Content-Type', 'application/json')
+                .timeout({ response: 5000, deadline: 10000 });
+
+            if (body)
+            {
+                request = request.send(body);
+            }
+
+            const response = await request;
+
+            log_request(Date.now() - start);
+            log_processed(method);
+
+            return response.body;
         }
+        catch(err)
+        {
+            const retryable = err.status === 429
+                || err.status >= 500
+                || err.code === 'ETIMEDOUT'
+                || err.code === 'ECONNABORTED'
+                || err.code === 'ECONNRESET';
 
-        const response = await request;
+            if(!retryable || attempts >= MAX_RETRIES)
+            {
+                throw new Error(get_error_message(err));
+            }
 
-        log_request(Date.now() - start);
-        log_processed(method);
-
-        return response.body;
-    }
-    catch(err)
-    {
-        throw new Error(get_error_message(err));
+            attempts++;
+            console.log(`Retry ${attempts} after ${err.status ?? err.code} error.`);
+            await sleep(delay);
+            delay = Math.min(delay * 2, 10000);
+        }
     }
 }
 
