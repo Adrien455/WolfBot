@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const state = require('../storage/state');
+const { get_member } = require('../storage/state');
 const { DEVS_IDS } = require('../config');
 
 const commands = new Map();
@@ -28,7 +28,7 @@ async function execute(command, player_id, args)    // checks perms
 
     if (command.strict)
     {
-        const member = state.members.get(player_id);
+        const member = get_member(player_id);
 
         if(!member.coleader && !member.leader)
         {

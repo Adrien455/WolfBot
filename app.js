@@ -2,7 +2,7 @@ const { load_data, schedule_save, flush } = require('./src/storage/storage');
 const { set_members } = require('./src/services/clan');
 const { set_quests } = require('./src/services/quest');
 
-const state = require('./src/storage/state');
+const { state } = require('./src/storage/state');
 
 const { stop_pollers } = require('./src/controller');
 

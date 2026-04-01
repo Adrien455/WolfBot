@@ -1,4 +1,4 @@
-const state = require('./state');
+const { state } = require('./state');
  
 const fs = require('fs/promises');
 const path = require('path');

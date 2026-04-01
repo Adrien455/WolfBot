@@ -1,7 +1,7 @@
 const { CLAN_ID, DEVS_IDS, OWNER_ID } = require('../config');
 const { get, put } = require('../api/requests');
 const { schedule_save } = require('../storage/storage');
-const state = require('../storage/state');
+const { state, get_member } = require('../storage/state');
 
 function create_member(overrides = {})
 {
@@ -73,10 +73,10 @@ function remove_member(member_id)
 
 function change_leader(member_id, leader_id)
 {
-    const former = state.members.get(leader_id);
+    const former = get_member(leader_id);
     former.leader = false;
 
-    const leader = state.members.get(member_id);
+    const leader = get_member(member_id);
     leader.leader = true;
     leader.coleader = false;
 
@@ -85,7 +85,7 @@ function change_leader(member_id, leader_id)
 
 function promote(member_id)
 {
-    const coleader = state.members.get(member_id);
+    const coleader = get_member(member_id);
     coleader.coleader = true;
 
     schedule_save();
@@ -93,7 +93,7 @@ function promote(member_id)
 
 function demote(coleader_id)
 {
-    const coleader = state.members.get(coleader_id);
+    const coleader = get_member(coleader_id);
     coleader.coleader = false;
 
     schedule_save();
@@ -138,7 +138,7 @@ function update_balances()
 
 function update_balance(member_id, amount)
 {
-    const member = state.members.get(member_id);
+    const member = get_member(member_id);
     member.balance += amount;
 
     schedule_save();

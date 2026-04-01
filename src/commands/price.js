@@ -1,5 +1,5 @@
 const { send_message } = require('../api/message');
-const state = require('../storage/state');
+const { state } = require('../storage/state');
 
 module.exports =
 {

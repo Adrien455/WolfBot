@@ -75,7 +75,7 @@ Restricted to leader and coleaders.
 - `!claim <type>` → 
     - Type can be either gold or gems. Default is gold.
     - Selects the most voted quest (among the selected type).
-    - In case of tie the **last encountered** one will be selected.
+    - In case of tie the **first encountered** one will be selected.
     - Does not take votes for shuffle into account. 
     - Updates member participation status based on contribution. 
     - Required amount : Initialized at **500**.

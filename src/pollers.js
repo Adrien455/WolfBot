@@ -10,7 +10,7 @@ const ledger_handler =  require('./handlers/ledger_handler');
 const { get_running } = require('./controller');
 const sleep = require('./utils/sleep');
 
-const state = require('./storage/state');
+const { state } = require('./storage/state');
 
 const PREFIX = "!";
 const POLL_MAX_DELAY = 5000;

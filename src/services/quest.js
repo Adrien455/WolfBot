@@ -1,7 +1,7 @@
 const { get } = require('../api/requests');
 const { CLAN_ID } = require('../config');
 const { schedule_save } = require('../storage/storage');
-const state = require('../storage/state');
+const { state } = require('../storage/state');
 
 let QUESTS = [];            // available quests
 
@@ -58,9 +58,14 @@ async function choose_quest(is_gold)
     let max_id = null;
     let max_count = -1;
 
-    for(const [id, arr] of Object.entries(votes))
+    for (const id of filtered)  // votes is not sorted
     {
-        if(filtered.includes(id) && arr.length >= max_count)
+        if (!filtered.includes(id)) continue;
+
+        const arr = votes[id];
+        if (!arr) continue;
+
+        if (arr.length > max_count) // takes first encountered
         {
             max_id = id;
             max_count = arr.length;
