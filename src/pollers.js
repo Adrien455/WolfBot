@@ -10,7 +10,7 @@ const ledger_handler =  require('./handlers/ledger_handler');
 const { get_running } = require('./controller');
 const sleep = require('./utils/sleep');
 
-const { state } = require('./storage/state');
+const state = require('./storage/state');
 
 const PREFIX = "!";
 const POLL_MAX_DELAY = 5000;
@@ -110,7 +110,7 @@ const ledger_poller = create_poller({
     handler: ledger_handler
 });
 
-async function run_pollers(starting_date)
+function run_pollers(starting_date)
 {
     messages_poller(starting_date, POLL_MIN_DELAY);
     logs_poller(state.last_log_date, POLL_MIN_DELAY);

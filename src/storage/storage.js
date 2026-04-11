@@ -1,5 +1,5 @@
-const { state } = require('./state');
- 
+const state = require('./state');
+
 const fs = require('fs/promises');
 const path = require('path');
 
@@ -32,7 +32,7 @@ async function load_data()
             return { required: 500, members: new Map() };
         }
         
-        throw new Error("Failed to load. Bad format.");
+        throw new Error(`Failed to load. Bad format: ${err.message}`);
     }
 }
 
@@ -57,7 +57,7 @@ async function save()
     }
     catch (err)
     {
-        console.error("Save error:", err.code); // add retry or prevent the !stop
+        console.log("Save error:", err.code); // add retry or prevent the !stop
     }
 }
 
@@ -90,6 +90,7 @@ async function flush()   // flush timeouts if any to force save
     if(saveTimeout)
     {
         clearTimeout(saveTimeout);
+        saveTimeout = null;
     }
 
     await sequenced_save();

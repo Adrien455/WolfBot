@@ -1,26 +1,25 @@
 const { get } = require('../api/requests');
 const { CLAN_ID } = require('../config');
 const { schedule_save } = require('../storage/storage');
-const { state } = require('../storage/state');
-
-let QUESTS = [];            // available quests
+const state = require('../storage/state');
 
 async function set_quests()
 {
     try
     {
-        QUESTS = await get(`clans/${CLAN_ID}/quests/available`);
+        const quests = await get(`clans/${CLAN_ID}/quests/available`);
+
+        state.quests = quests
+            .map((quest) => 
+                {
+                    return { id: quest.id, purchasableWithGems: quest.purchasableWithGems };
+                });
         console.log("Quests set at", new Date());
     }
     catch(err)
     {
         throw new Error(`Failed to fetch quests.\n${err.message}`);
     }
-}
-
-function get_quests()
-{
-    return QUESTS;
 }
 
 function set_required(value = 500)
@@ -47,7 +46,7 @@ async function choose_quest(is_gold)
 
     const filtered = [];
 
-    for(const quest of QUESTS)
+    for(const quest of state.quests)
     {
         if(quest.purchasableWithGems !== is_gold)
         {
@@ -60,9 +59,8 @@ async function choose_quest(is_gold)
 
     for (const id of filtered)  // votes is not sorted
     {
-        if (!filtered.includes(id)) continue;
-
         const arr = votes[id];
+        
         if (!arr) continue;
 
         if (arr.length > max_count) // takes first encountered
@@ -77,7 +75,6 @@ async function choose_quest(is_gold)
 
 module.exports = { 
     set_quests, 
-    get_quests, 
     choose_quest, 
     set_required,
 };

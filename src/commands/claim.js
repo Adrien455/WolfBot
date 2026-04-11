@@ -33,7 +33,7 @@ module.exports =
         const winner = await choose_quest(is_gold);
         console.log("Winner:", winner);
 
-        await update_participating();
+        await update_participating();   // not critical even if post throws
 
         let response;
 

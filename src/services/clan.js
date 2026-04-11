@@ -1,7 +1,7 @@
 const { CLAN_ID, DEVS_IDS, OWNER_ID } = require('../config');
 const { get, put } = require('../api/requests');
 const { schedule_save } = require('../storage/storage');
-const { state, get_member } = require('../storage/state');
+const state = require('../storage/state');
 
 function create_member(overrides = {})
 {
@@ -63,6 +63,18 @@ async function set_members()
             coleader: member.isCoLeader,
         });
     });
+}
+
+function get_member(member_id)
+{
+    const member = state.members.get(member_id)
+
+    if(!member) // very unlikely
+    {
+        throw new Error("Member not in the clan anymore.")
+    }
+
+    return member;
 }
 
 function remove_member(member_id)
@@ -136,7 +148,7 @@ function update_balances()
     schedule_save();
 }
 
-function update_balance(member_id, amount)
+function update_balance(member_id, amount)  // test only
 {
     const member = get_member(member_id);
     member.balance += amount;
@@ -147,6 +159,7 @@ function update_balance(member_id, amount)
 
 module.exports = { 
     set_members,
+    get_member,
     change_leader,
     promote,
     demote,

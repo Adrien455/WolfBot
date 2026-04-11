@@ -2,7 +2,7 @@ const { load_data, schedule_save, flush } = require('./src/storage/storage');
 const { set_members } = require('./src/services/clan');
 const { set_quests } = require('./src/services/quest');
 
-const { state } = require('./src/storage/state');
+const state = require('./src/storage/state');
 
 const { stop_pollers } = require('./src/controller');
 
@@ -23,8 +23,8 @@ process.on('unhandledRejection', async (reason) =>
 
 async function start()
 {
-  data = await load_data();
-  starting_date = new Date();
+  const data = await load_data();
+  const starting_date = new Date();
 
   state.last_log_date = data.last_log_date ? new Date(data.last_log_date) : starting_date;
   state.last_ledger_date = data.last_ledger_date ? new Date(data.last_ledger_date) : starting_date;

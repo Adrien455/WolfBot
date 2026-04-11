@@ -79,7 +79,7 @@ Restricted to leader and coleaders.
     - Does not take votes for shuffle into account. 
     - Updates member participation status based on contribution. 
     - Required amount : Initialized at **500**.
-    - Contributions are tracked from bot startup only.
+    - Contributions are tracked from bot first start only.
     - If !claim fails required price will not be deduced.
 
 - `!shuffle` → Shuffles available quests.
