@@ -1,7 +1,5 @@
-const { CLAN_ID, DEVS_IDS, OWNER_ID } = require('../config');
+const { DEVS_IDS, OWNER_ID } = require('../config');
 const { get, put } = require('../api/requests');
-const { schedule_save } = require('../storage/storage');
-const state = require('../storage/state');
 
 function create_member(overrides = {})
 {
@@ -17,28 +15,28 @@ function create_member(overrides = {})
     };
 }
 
-function add_member(member_id, overrides = {})
+function add_member(context, member_id, overrides = {})
 {
-    state.members.set(member_id, create_member(
+    context.state.members.set(member_id, create_member(
     {
         ...overrides,
         owner: member_id === OWNER_ID,
         dev: DEVS_IDS.includes(member_id)   // owner and dev cant be overriden change config.js for that purpose
     }));
 
-    schedule_save();
+    context.storage.schedule_save();
 }  
 
-async function set_members()
+async function set_members(context)
 {
-    state.members = new Map();
+    context.state.members = new Map();
 
     let clan_info;
     let members;
 
     try
     {
-        clan_info = await get(`clans/${CLAN_ID}/info`);
+        clan_info = await get(`clans/${context.id}/info`);
     }
     catch(err)
     {
@@ -47,7 +45,7 @@ async function set_members()
         
     try
     {
-        members = await get(`clans/${CLAN_ID}/members`);
+        members = await get(`clans/${context.id}/members`);
     }
     catch(err)
     {
@@ -56,7 +54,7 @@ async function set_members()
 
     members.forEach(member =>
     {
-        add_member(member.playerId,
+        add_member(context, member.playerId,
         {
             name: member.username,
             leader: member.playerId === clan_info.leaderId,
@@ -65,9 +63,9 @@ async function set_members()
     });
 }
 
-function get_member(member_id)
+function get_member(context, member_id)
 {
-    const member = state.members.get(member_id)
+    const member = context.state.members.get(member_id)
 
     if(!member) // very unlikely
     {
@@ -77,52 +75,52 @@ function get_member(member_id)
     return member;
 }
 
-function remove_member(member_id)
+function remove_member(context, member_id)
 {
-    state.members.delete(member_id);
-    schedule_save();
+    context.state.members.delete(member_id);
+    context.storage.schedule_save();
 }
 
-function change_leader(member_id, leader_id)
+function change_leader(context, member_id, leader_id)
 {
-    const former = get_member(leader_id);
+    const former = get_member(context, leader_id);
     former.leader = false;
 
-    const leader = get_member(member_id);
+    const leader = get_member(context, member_id);
     leader.leader = true;
     leader.coleader = false;
 
-    schedule_save();
+    context.storage.schedule_save();
 }
 
-function promote(member_id)
+function promote(context, member_id)
 {
-    const coleader = get_member(member_id);
+    const coleader = get_member(context, member_id);
     coleader.coleader = true;
 
-    schedule_save();
+    context.storage.schedule_save();
 }
 
-function demote(coleader_id)
+function demote(context, coleader_id)
 {
-    const coleader = get_member(coleader_id);
+    const coleader = get_member(context, coleader_id);
     coleader.coleader = false;
 
-    schedule_save();
+    context.storage.schedule_save();
 }
 
-async function update_participating()
+async function update_participating(context)
 {
-    for (const [member_id, member] of state.members.entries())
+    for (const [member_id, member] of context.state.members.entries())
     {
-        const is_participating = member.balance >= state.required;
+        const is_participating = member.balance >= context.state.required;
 
         if (member.participating !== is_participating) 
         {
             try
             {
                 const body = { "participateInQuests": is_participating };
-                await put(`clans/${CLAN_ID}/members/${member_id}/participateInQuests`, body);
+                await put(`clans/${context.id}/members/${member_id}/participateInQuests`, body);
                 member.participating = is_participating;
             }
             catch(err)
@@ -132,28 +130,28 @@ async function update_participating()
         }
     }
 
-    schedule_save();
+    context.storage.schedule_save();
 }
 
-function update_balances()
+function update_balances(context)
 {
-    for (const [player_id, member] of state.members.entries())
+    for (const [player_id, member] of context.state.members.entries())
     {
         if(member.participating)
         {
-            member.balance -= state.required;
+            member.balance -= context.state.required;
         }
     }
 
-    schedule_save();
+    context.storage.schedule_save();
 }
 
-function update_balance(member_id, amount)  // test only
+function update_balance(context, member_id, amount)  // test only
 {
-    const member = get_member(member_id);
+    const member = get_member(context, member_id);
     member.balance += amount;
 
-    schedule_save();
+    context.storage.schedule_save();
 }
 
 

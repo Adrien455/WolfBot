@@ -5,11 +5,11 @@ const { set_quests } = require('../services/quest');
 
 let task;
 
-function start_cron()
+function start_cron(context)
 {
     task = cron.schedule(every_monday, async () =>
     {     
-        await set_quests(); 
+        await set_quests(context);
     },
     {
         timezone: 'UTC'

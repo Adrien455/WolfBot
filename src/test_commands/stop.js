@@ -1,6 +1,4 @@
-const { stop_pollers } = require('../controller');
 const { stop_cron } = require('../utils/cron');
-const { flush } = require('../storage/storage');
 
 module.exports =
 {
@@ -9,10 +7,10 @@ module.exports =
     strict: false,
     dev: true,
 
-    async execute()
+    async execute(context)
     {
-        stop_pollers();
+        context.running = false;
         stop_cron();
-        await flush();
+        await context.storage.flush();
     }
 };

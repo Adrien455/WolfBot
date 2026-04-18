@@ -1,5 +1,4 @@
 const {  post } = require('../api/requests');
-const { CLAN_ID } = require('../config');
 const { update_participating, update_balances } = require('../services/clan');
 const { choose_quest } = require('../services/quest');
 
@@ -13,7 +12,7 @@ module.exports =
     strict: true,
     dev: false,
 
-    async execute(player_id, type)
+    async execute(context, player_id, type)
     {
         let is_gold;
 
@@ -30,23 +29,23 @@ module.exports =
             throw new Error("Input Error: Wrong argument.\nUndefined, gold and gems are accepted.");
         }
 
-        const winner = await choose_quest(is_gold);
+        const winner = await choose_quest(context, is_gold);
         console.log("Winner:", winner);
 
-        await update_participating();   // not critical even if post throws
+        await update_participating(context);   // not critical even if post throws
 
         let response;
 
         try
         {
-            response = await post(`clans/${CLAN_ID}/quests/claim`, { "questId": winner });
+            response = await post(`clans/${context.id}/quests/claim`, { "questId": winner });
         }
         catch(err)
         {
             throw new Error(`Failed to claim quest.\n${err.message}`);
         }
 
-        update_balances();  
+        update_balances(context);  
 
         return response;
     }

@@ -1,13 +1,13 @@
 const { update_balance } = require('../services/clan');
 
-async function ledger_handler(transaction)
+async function ledger_handler(context, transaction)
 {
        console.log(transaction);
 
        switch(transaction.type)
        {
               case "DONATE":
-                     update_balance(transaction.playerId, transaction.gold);
+                     update_balance(context, transaction.playerId, transaction.gold);
                      break;
        }
 }

@@ -78,7 +78,6 @@ Restricted to leader and coleaders.
     - In case of tie the **first encountered** one will be selected.
     - Does not take votes for shuffle into account. 
     - Updates member participation status based on contribution. 
-    - Required amount : Initialized at **500**.
     - Contributions are tracked from bot first start only.
     - If !claim fails required price will not be deduced.
 
@@ -100,15 +99,13 @@ Restricted to players included in `DEVS_IDS`.
 
 - `!clear` → Clear cached quests and members.
 
-- `!stop` → Stops the program. Data will be saved locally.
+- `!stop` → Stops the bot. Data will be saved locally.
 
 ## Notes
 
-- This bot is currently designed to work in a **single clan** (id is hardcoded).
+- Can run on several clans (for now ids are hardcoded. Need to poll over authorized clans and add a guard).
 
 - It relies on **polling** and continuously checks clan messages, clan logs and clan ledger.
-
-- Adding this bot to another clan will have no effect.
 
 - Member data is continuously saved locally. When the bot starts, it loads any existing local data. Changes occuring during offline state / network shutdown are safely retrieved at restart / reconnection.
 

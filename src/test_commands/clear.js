@@ -8,17 +8,17 @@ module.exports =
     strict: false,
     dev: true,
 
-    async execute()
+    async execute(context)
     {
         try
         {
-            await set_members();   // THIS WILL RESET MEMBERS BALANCES !!!!!
+            await set_members(context);   // THIS WILL RESET MEMBERS BALANCES !!!!!
         }
         catch(err)
         {
             throw new Error(`Failed to set members.\n${err.message}`);
         }
 
-        await set_quests();
+        await set_quests(context);
     }
 };

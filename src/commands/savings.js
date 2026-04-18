@@ -8,9 +8,9 @@ module.exports =
     strict: false,
     dev: false,
 
-    async execute(member_id)
+    async execute(context, member_id)
     {
-        const member = get_member(member_id);
-        return await send_message(`Current savings : ${member.balance}`);
+        const member = get_member(context, member_id);
+        return await send_message(context, `Current savings : ${member.balance}`);
     }
 };

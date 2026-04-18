@@ -1,5 +1,4 @@
 const { post } = require('../api/requests');
-const { CLAN_ID } = require('../config');
 
 module.exports =
 {
@@ -8,11 +7,11 @@ module.exports =
     strict: true,
     dev: false,
 
-    async execute()
+    async execute(context)
     {
         try
         {
-            return await post(`clans/${CLAN_ID}/quests/active/claimTime`);  
+            return await post(`clans/${context.id}/quests/active/claimTime`);  
         }
         catch(err)
         {

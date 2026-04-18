@@ -19,7 +19,7 @@ function load_commands(dir)     // loads modules in specified directory and add 
 load_commands("../commands");
 load_commands("../test_commands");
 
-async function execute(command, player_id, args)    // checks perms
+async function execute(context, command, player_id, args)    // checks perms
 {
     if (command.dev && !DEVS_IDS.includes(player_id))
     {
@@ -28,7 +28,7 @@ async function execute(command, player_id, args)    // checks perms
 
     if (command.strict)
     {
-        const member = get_member(player_id);
+        const member = get_member(context, player_id);
 
         if(!member.coleader && !member.leader)
         {
@@ -36,10 +36,10 @@ async function execute(command, player_id, args)    // checks perms
         }
     }
 
-    return await command.execute(player_id, ...args);
+    return await command.execute(context, player_id, ...args);
 }
 
-async function command_handler(message)
+async function command_handler(context, message)
 {
     const args = message.msg.slice(1).trim().split(/ +/);
     const name = args.shift().toLowerCase();
@@ -52,7 +52,7 @@ async function command_handler(message)
         throw new Error("Input Error: Unknown command.")
     }
 
-    await execute(command, player_id, args);
+    await execute(context, command, player_id, args);
     
 }
 

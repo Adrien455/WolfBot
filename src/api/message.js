@@ -1,11 +1,10 @@
 const { get, post } = require('./requests');
-const { CLAN_ID } = require('../config');
 
-async function get_last_messages()
+async function get_last_messages(context)
 {
     try
     {
-        return await get(`clans/${CLAN_ID}/chat`);
+        return await get(`clans/${context.id}/chat`);
     }
     catch(err)
     {
@@ -13,12 +12,12 @@ async function get_last_messages()
     }
 }
 
-async function send_message(msg)
+async function send_message(context, msg)
 {
     try
     {
         const body = { "message": msg };
-        return await post(`clans/${CLAN_ID}/chat`, body);
+        return await post(`clans/${context.id}/chat`, body);
     }
     catch(err)
     {

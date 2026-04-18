@@ -7,8 +7,8 @@ module.exports =
     strict: false,
     dev: false,
 
-    async execute()
+    async execute(context)
     {
-        return await send_message("Beep Beep I'm a bot.");
+        return await send_message(context, "Beep Beep I'm a bot.");
     }
 };

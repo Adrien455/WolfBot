@@ -1,4 +1,3 @@
-const state = require('../storage/state');
 
 module.exports =
 {
@@ -7,8 +6,10 @@ module.exports =
     strict: false,
     dev: true,
 
-    async execute()
+    async execute(context)
     {
-        console.log(state);
+        console.log("Clan Id: ", context.id);
+        console.log("Members :", context.state.members);
+        console.log("Required :", context.state.required, "\n");
     }
 };

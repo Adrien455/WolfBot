@@ -1,5 +1,4 @@
 const { send_message } = require('../api/message');
-const state = require('../storage/state');
 
 module.exports =
 {
@@ -8,8 +7,8 @@ module.exports =
     strict: false,
     dev: false,
 
-    async execute()
+    async execute(context)
     {
-        return await send_message(`Required for next quest: ${state.required}`);
+        return await send_message(context, `Required for next quest: ${context.state.required}`);
     }
 };

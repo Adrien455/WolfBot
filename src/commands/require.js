@@ -8,7 +8,7 @@ module.exports =
     strict: true,
     dev: false,
 
-    async execute(player_id, value = 500)
+    async execute(context, player_id, value = 500)
     {
         if (!/^\d+$/.test(value))
         {
@@ -17,7 +17,7 @@ module.exports =
 
         const parsed = Number(value);
 
-        set_required(parsed);
-        return await send_message(`Required gold set at ${parsed}`);
+        set_required(context, parsed);
+        return await send_message(context, `Required gold set at ${parsed}`);
     }
 };

@@ -1,15 +1,12 @@
 const { get } = require('../api/requests');
-const { CLAN_ID } = require('../config');
-const { schedule_save } = require('../storage/storage');
-const state = require('../storage/state');
 
-async function set_quests()
+async function set_quests(context)
 {
     try
     {
-        const quests = await get(`clans/${CLAN_ID}/quests/available`);
+        const quests = await get(`clans/${context.id}/quests/available`);
 
-        state.quests = quests
+        context.state.quests = quests
             .map((quest) => 
                 {
                     return { id: quest.id, purchasableWithGems: quest.purchasableWithGems };
@@ -22,20 +19,20 @@ async function set_quests()
     }
 }
 
-function set_required(value = 500)
+function set_required(context, value = 500)
 {
-    state.required = value;
+    context.state.required = value;
 
-    schedule_save();
+    context.storage.schedule_save();
 }
 
-async function choose_quest(is_gold)
+async function choose_quest(context, is_gold)
 {
     let options;
 
     try
     {
-        options = await get(`clans/${CLAN_ID}/quests/votes`);
+        options = await get(`clans/${context.id}/quests/votes`);
     }
     catch(err)
     {
@@ -46,7 +43,7 @@ async function choose_quest(is_gold)
 
     const filtered = [];
 
-    for(const quest of state.quests)
+    for(const quest of context.state.quests)
     {
         if(quest.purchasableWithGems !== is_gold)
         {

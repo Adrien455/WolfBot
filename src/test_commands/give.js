@@ -7,7 +7,7 @@ module.exports =
     strict: false,
     dev: true,
 
-    async execute(player_id, value = 500)
+    async execute(context, player_id, value = 500)
     {
         if (!/^-?\d+$/.test(value))
         {
@@ -16,6 +16,6 @@ module.exports =
 
         const parsed = Number(value);
 
-        update_balance(player_id, parsed);
+        update_balance(context, player_id, parsed);
     }
 };
