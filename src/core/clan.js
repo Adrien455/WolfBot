@@ -1,12 +1,12 @@
-const run_pollers = require('./src/pollers');
-const { set_members } = require('./src/services/clan');
-const { set_quests } = require('./src/services/quest');
-const { start_cron, stop_cron } = require('./src/utils/cron');
-const Storage = require('./src/storage');
+const run_pollers = require('../pollers');
+const { set_members } = require('../services/clan_manager');
+const { set_quests } = require('../services/quest');
+const { start_cron, stop_cron } = require('../utils/cron');
+const Storage = require('../storage');
 
 class Clan
 {
-    constructor(id, data_file)
+    constructor(id, remove)
     {
         this.id = id;
 
@@ -19,7 +19,7 @@ class Clan
             quests: null
         }
 
-        this.storage = new Storage(this.state, data_file);
+        this.storage = new Storage(this.state, id);
 
         this.context = 
         {
@@ -27,6 +27,7 @@ class Clan
             running: true,
             state: this.state,
             storage: this.storage,
+            on_unauthorized: remove
         }
     }
 

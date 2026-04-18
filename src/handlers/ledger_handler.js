@@ -1,4 +1,4 @@
-const { update_balance } = require('../services/clan');
+const { update_balance } = require('../services/clan_manager');
 
 async function ledger_handler(context, transaction)
 {

@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const { get_member } = require('../services/clan');
+const { get_member } = require('../services/clan_manager');
 const { DEVS_IDS } = require('../config');
 
 const commands = new Map();

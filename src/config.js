@@ -5,7 +5,6 @@ const BASE_URL = "https://api.wolvesville.com";
 
 const OWNER_ID = "b5e253a4-1478-47ac-85a1-bdb7c02a2c9c";    // owner of bot
 
-// CRITICAL HAS ACCESS TO DB
 const DEVS_IDS = 
 [
     "4ecb4631-556d-4aa6-86cb-26b414cff65a",

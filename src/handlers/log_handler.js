@@ -1,4 +1,4 @@
-const { add_member, remove_member, change_leader, promote, demote } = require('../services/clan');
+const { add_member, remove_member, change_leader, promote, demote } = require('../services/clan_manager');
 const { send_message } = require('../api/message');
 
 async function log_handler(context, log)

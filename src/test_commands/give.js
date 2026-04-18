@@ -1,4 +1,4 @@
-const { update_balance } = require('../services/clan');
+const { update_balance } = require('../services/clan_manager');
 
 module.exports =
 {

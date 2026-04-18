@@ -1,34 +1,34 @@
-const Clan = require('./clan_manager');
+const { init_clans, update, get_clans } = require('./src/core/clan_registry');
 
 const { report } = require('./src/utils/monitoring');
 // setInterval(report, 10000).unref();
 
-const CLAN_IDS =
-[
-    "f40ab7fa-57d1-4bae-87a4-dfa64097765f",
-    "778332cc-6627-427a-84f4-08273de0f5d3"
-];
-
-const clans = [];
-
 process.on('unhandledRejection', async (reason) => 
 {
     console.log('Unhandled rejection:', reason);
-    await Promise.all(clans.map(c => c.stop()));
+    const clans = get_clans();
+    await Promise.all(Array.from(clans.values(), clan => clan.stop()));
 });
+
+const RELOAD_INTERVAL = 10 * 60 * 1000; // 10 minutes
 
 async function start()
 {
-    for(const id of CLAN_IDS)
+    try
     {
-        const clan = new Clan(id, id.slice(0, 8));
-        clan.start();
-        clans.push(clan);
-    } 
+        await init_clans();
+    }
+    catch(err)
+    {
+        console.log(`Critical error at start.\n${err.message}`);
+        process.exit(1);
+    }
+
+    setInterval(() => 
+    {
+        console.log("Updating authorized clans ...");
+        update();
+    }, RELOAD_INTERVAL).unref();
 }
 
-start().catch(err =>
-{
-    console.log(`Critical error at start.\n${err}`);
-    process.exit(1);
-});
+start();

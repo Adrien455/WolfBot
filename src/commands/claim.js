@@ -1,5 +1,5 @@
 const {  post } = require('../api/requests');
-const { update_participating, update_balances } = require('../services/clan');
+const { update_participating, update_balances } = require('../services/clan_manager');
 const { choose_quest } = require('../services/quest');
 
 module.exports =

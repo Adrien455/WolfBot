@@ -1,5 +1,5 @@
 const { send_message } = require('../api/message');
-const { get_member} = require('../services/clan');
+const { get_member} = require('../services/clan_manager');
 
 module.exports =
 {

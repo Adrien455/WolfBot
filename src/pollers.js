@@ -29,6 +29,13 @@ function create_poller({fetch, get_date, set_last, handler, filter = () => true}
             catch(err)
             {
                 console.log(err.message);
+
+                if(err.message.includes('Wrong api key or bot not added.'))
+                {
+                    context.on_unauthorized();
+                    return;
+                }
+
                 await sleep(delay);
                 continue;
             }
@@ -54,6 +61,7 @@ function create_poller({fetch, get_date, set_last, handler, filter = () => true}
                         }
                         catch(err)
                         {
+                            
                             console.log(err.message);
 
                             try

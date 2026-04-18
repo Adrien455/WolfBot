@@ -32,10 +32,9 @@ You can reset it in game's settings in case of accidental push / any leaks.
 
 ### Config.js :
 
-Set your clan and users IDs in `config.js` :
+Set users IDs in `config.js` :
 
 ```js
-const CLAN_ID = "MY_CLAN_ID";
 const OWNER_ID = "OWNER_ID";
 const DEVS_IDS = [
     "DEV_ID1",
@@ -46,7 +45,25 @@ const DEVS_IDS = [
 You can retrieve IDs using https://api.wolvesville.com/.<br>
 See the [documentation](https://api-docs.wolvesville.com/) for the endpoints.
 
-**⚠️ Warning :** Players in `DEVS_IDS` have accessed at **debugging commands** that can modify internal data. Only add trusted members.
+**⚠️ Warning :** Players in `DEVS_IDS` have accessed to **debugging commands** that can modify internal data. Only add trusted members.
+
+### clan_ids.json :
+
+Set authorized clan ids in `clan_ids.json`:
+
+```json
+{
+    "ids": [
+        "id1",
+        "id2"
+    ]
+}
+```
+
+This allows you to dynamically manage which clan can use your bot.<br>
+Consider it as an additional security layer that takes precedence over the list given by the api.<br>
+Adding this bot to a clan in game is consequently not sufficient.<br>
+This file is reloaded every 10 minutes.
 
 ## Run bot :
 
@@ -97,13 +114,13 @@ Restricted to players included in `DEVS_IDS`.
 
 - `!log` → Logs internal data.
 
-- `!clear` → Clear cached quests and members.
+- `!clear` → Clears cached quests and members.
 
 - `!stop` → Stops the bot. Data will be saved locally.
 
 ## Notes
 
-- Can run on several clans (for now ids are hardcoded. Need to poll over authorized clans and add a guard).
+- Can run on several clans.
 
 - It relies on **polling** and continuously checks clan messages, clan logs and clan ledger.
 

@@ -3,10 +3,10 @@ const path = require('path');
 
 class Storage 
 {
-    constructor(state, file_path)
+    constructor(state, data_id)
     {
         this.state = state;
-        this.file_path = path.join(__dirname, `../../data/${file_path}.json`);;
+        this.data_id = path.join(__dirname, `../data/${data_id}.json`);;
         this.saveTimeout = null;
         this.queue = Promise.resolve();
     }
@@ -15,7 +15,7 @@ class Storage
     {
         try
         {
-            const data = await fs.readFile(this.file_path, 'utf-8');
+            const data = await fs.readFile(this.data_id, 'utf-8');
             const parsed = JSON.parse(data);
 
             console.log("Found data.")
@@ -52,10 +52,10 @@ class Storage
             };
 
             const saved = JSON.stringify(body, null, 2);
-            const tmp = this.file_path + ".tmp";
+            const tmp = this.data_id + ".tmp";
 
             await fs.writeFile(tmp, saved);
-            await fs.rename(tmp, this.file_path);
+            await fs.rename(tmp, this.data_id);
 
         }
         catch (err)
