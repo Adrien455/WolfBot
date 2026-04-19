@@ -13,9 +13,8 @@ async function remove(id)
     if(clan)    // on_unauthorized will be called thrice, prevent type error
     {
         await clan.stop();
+        clans.delete(id);
     }
-
-    clans.delete(id);
 }
 
 async function add(id)
@@ -86,11 +85,6 @@ async function update()
         for(const id of removed)
         {
             remove(id); // not strict
-
-            if(clans.size == 0)
-            {
-                stop_cron();
-            }
         }
 
         console.log("Running clans: ", clans.keys());

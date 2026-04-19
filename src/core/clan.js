@@ -1,8 +1,8 @@
 const run_pollers = require('../pollers');
 const { set_members } = require('../services/clan_manager');
 const { set_quests } = require('../services/quest');
-const { start_cron, stop_cron } = require('../utils/cron');
 const Storage = require('../storage');
+const Cron = require('../utils/cron');
 
 class Clan
 {
@@ -29,12 +29,14 @@ class Clan
             storage: this.storage,
             on_unauthorized: remove
         }
+
+        this.cron = new Cron(this.context)
     }
 
     async stop()
     {
         this.context.running = false;
-        stop_cron();
+        this.cron.stop_cron();
         await this.context.storage.flush();
     }
 
@@ -51,8 +53,6 @@ class Clan
         if(this.context.state.members.size == 0) await set_members(this.context);
 
         await set_quests(this.context);
-
-        start_cron(this.context);
 
         try
         {

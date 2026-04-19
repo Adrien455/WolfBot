@@ -3,26 +3,23 @@ const every_monday = '0 0 * * 1';
 
 const { set_quests } = require('../services/quest');
 
-let task;
-
-function start_cron(context)
+class Cron
 {
-    task = cron.schedule(every_monday, async () =>
-    {     
-        await set_quests(context);
-    },
+    constructor(context)
     {
-        timezone: 'UTC'
-    });
-}
+        this.task = cron.schedule(every_monday, async () =>
+        {     
+            await set_quests(context);
+        },
+        {
+            timezone: 'UTC'
+        });   
+    }
 
-function stop_cron()
-{
-    if (task)
+    stop()
     {
-        task.destroy();
-        task = null;
+        this.task.destroy();
     }
 }
 
-module.exports = { start_cron, stop_cron };
+module.exports = Cron;

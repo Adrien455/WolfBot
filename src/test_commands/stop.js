@@ -1,4 +1,3 @@
-const { stop_cron } = require('../utils/cron');
 
 module.exports =
 {
@@ -10,7 +9,6 @@ module.exports =
     async execute(context)
     {
         context.running = false;
-        stop_cron();
         await context.storage.flush();
     }
 };
