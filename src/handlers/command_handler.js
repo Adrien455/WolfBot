@@ -52,7 +52,7 @@ async function command_handler(context, message)
         throw new Error("Input Error: Unknown command.")
     }
 
-    await execute(context, command, player_id, args);
+    return await execute(context, command, player_id, args);
     
 }
 

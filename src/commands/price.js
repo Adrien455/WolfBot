@@ -1,5 +1,3 @@
-const { send_message } = require('../api/message');
-
 module.exports =
 {
     name: "price",
@@ -9,6 +7,6 @@ module.exports =
 
     async execute(context)
     {
-        return await send_message(context, `Required for next quest: ${context.state.required}`);
+        return `Required for next quest: ${context.state.required}`;
     }
 };

@@ -1,22 +1,17 @@
 const { get } = require('../api/requests');
+const BotError = require('../utils/error');
 
 async function set_quests(context)
 {
-    try
-    {
-        const quests = await get(`clans/${context.id}/quests/available`);
+    const quests = await get(`clans/${context.id}/quests/available`);
 
-        context.state.quests = quests
-            .map((quest) => 
-                {
-                    return { id: quest.id, purchasableWithGems: quest.purchasableWithGems };
-                });
-        console.log("Quests set at", new Date());
-    }
-    catch(err)
-    {
-        throw new Error(`Failed to fetch quests.\n${err.message}`);
-    }
+    context.state.quests = quests
+        .map((quest) => 
+            {
+                return { id: quest.id, purchasableWithGems: quest.purchasableWithGems };
+            });
+
+    console.log("Quests set at", new Date());
 }
 
 function set_required(context, value = 500)
@@ -28,17 +23,7 @@ function set_required(context, value = 500)
 
 async function choose_quest(context, is_gold)
 {
-    let options;
-
-    try
-    {
-        options = await get(`clans/${context.id}/quests/votes`);
-    }
-    catch(err)
-    {
-        throw new Error(`Failed to fetch quests votes.\n${err.message}`);
-    }
-
+    const options =  await get(`clans/${context.id}/quests/votes`);
     const votes = options.votes;
 
     const filtered = [];

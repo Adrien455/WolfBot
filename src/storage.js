@@ -1,6 +1,11 @@
 const fs = require('fs/promises');
 const path = require('path');
 
+const sleep = require('./utils/sleep');
+const BotError = require('./utils/error');
+
+const MAX_SAVE_RETRIES = 3;
+
 class Storage 
 {
     constructor(state, data_id)
@@ -35,33 +40,38 @@ class Storage
                 return { required: 500, members: new Map() };
             }
         
-            throw new Error(`Failed to load. Bad format: ${err.message}`);
+            throw new BotError(undefined, `Failed to load. Bad format: ${err.message}`);
         }
     }
 
     async save()
     {
-        try
+        for(let i = 0; i < MAX_SAVE_RETRIES; i++)
         {
-            const body = {
-                date: new Date(),
-                last_log_date: this.state.last_log_date,
-                last_ledger_date: this.state.last_ledger_date,
-                required: this.state.required,
-                members: [...this.state.members]
-            };
+            try
+            {
+                const body = {
+                    date: new Date(),
+                    last_log_date: this.state.last_log_date,
+                    last_ledger_date: this.state.last_ledger_date,
+                    required: this.state.required,
+                    members: [...this.state.members]
+                };
 
-            const saved = JSON.stringify(body, null, 2);
-            const tmp = this.data_id + ".tmp";
+                const saved = JSON.stringify(body, null, 2);
+                const tmp = this.data_id + ".tmp";
 
-            await fs.writeFile(tmp, saved);
-            await fs.rename(tmp, this.data_id);
-
-        }
-        catch (err)
-        {
-            console.log("Save error:", err);
-            // if last save throws (!stop or unhandled error) data is lost
+                await fs.writeFile(tmp, saved);
+                await fs.rename(tmp, this.data_id);
+                break;
+            }
+            catch (err)
+            {
+                console.log("Save error:", err.code);
+                console.log(`Retry to save after ${i + 1} attempts.`);
+                await sleep(100);
+                // data will be lost after 3 retries if laste save (triggered by !stop or unhandled error)
+            }
         }
     }
 

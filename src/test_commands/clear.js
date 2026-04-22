@@ -1,5 +1,6 @@
 const { set_members } = require('../services/clan_manager');
 const { set_quests } = require('../services/quest');
+const BotError = require('../utils/error');
 
 module.exports =
 {
@@ -16,7 +17,7 @@ module.exports =
         }
         catch(err)
         {
-            throw new Error(`Failed to set members.\n${err.message}`);
+            throw new BotError(undefined, `Failed to set members.\n${err.message}`);
         }
 
         await set_quests(context);

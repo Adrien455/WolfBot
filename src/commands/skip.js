@@ -9,13 +9,8 @@ module.exports =
 
     async execute(context)
     {
-        try
-        {
-            return await post(`clans/${context.id}/quests/active/skipWaitingTime`);
-        }
-        catch(err)
-        {
-            throw new Error(`Failed skip waiting time.\n${err.message}`);
-        }
+        await post(`clans/${context.id}/quests/active/skipWaitingTime`);
+        
+        return "Waiting time skipped successfully.";
     }
 };

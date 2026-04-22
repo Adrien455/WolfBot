@@ -3,8 +3,6 @@ const { send_message } = require('../api/message');
 
 async function log_handler(context, log)
 {
-       console.log(log);
-
        switch(log.action)
        {
             case "JOIN_REQUEST_ACCEPTED":
@@ -37,6 +35,10 @@ async function log_handler(context, log)
 
             case "CO_LEADER_RESIGNED":
                 demote(context, log.playerId);
+                break;
+
+            default:
+                console.log(`Log not handled: ${log.action}`);
                 break;
         }
 }

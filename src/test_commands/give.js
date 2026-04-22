@@ -1,4 +1,5 @@
 const { update_balance } = require('../services/clan_manager');
+const BotError = require('../utils/error');
 
 module.exports =
 {
@@ -11,7 +12,7 @@ module.exports =
     {
         if (!/^-?\d+$/.test(value))
         {
-            throw new Error("Input Error: Wrong argument.\nPlease enter integer.");
+            throw new BotError("Please enter integer.", "Input Error: Wrong argument.\n");
         }
 
         const parsed = Number(value);

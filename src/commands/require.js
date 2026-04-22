@@ -1,5 +1,5 @@
-const { send_message } = require('../api/message');
 const { set_required } = require('../services/quest');
+const BotError = require('../utils/error');
 
 module.exports =
 {
@@ -12,12 +12,13 @@ module.exports =
     {
         if (!/^\d+$/.test(value))
         {
-            throw new Error("Input Error: Wrong argument.\nPlease enter positive integer.");
+            throw new BotError("Please enter positive integer.", "Input Error: Wrong argument.\n");
         }
 
         const parsed = Number(value);
 
         set_required(context, parsed);
-        return await send_message(context, `Required gold set at ${parsed}`);
+
+        return `Required gold set at ${parsed}`;
     }
 };

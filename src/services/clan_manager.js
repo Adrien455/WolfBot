@@ -1,5 +1,6 @@
 const { DEVS_IDS, OWNER_ID } = require('../config');
 const { get, put } = require('../api/requests');
+const BotError = require('../utils/error');
 
 function create_member(overrides = {})
 {
@@ -31,26 +32,8 @@ async function set_members(context)
 {
     context.state.members = new Map();
 
-    let clan_info;
-    let members;
-
-    try
-    {
-        clan_info = await get(`clans/${context.id}/info`);
-    }
-    catch(err)
-    {
-        throw new Error(`Failed to fetch clan_info\n${err.message}`);
-    }
-        
-    try
-    {
-        members = await get(`clans/${context.id}/members`);
-    }
-    catch(err)
-    {
-        throw new Error(`Failed to fetch clan members\n${err.message}`);
-    }
+    let clan_info = await get(`clans/${context.id}/info`);
+    let members = await get(`clans/${context.id}/members`);
 
     members.forEach(member =>
     {
@@ -69,7 +52,7 @@ function get_member(context, member_id)
 
     if(!member) // very unlikely
     {
-        throw new Error("Member not in the clan anymore.")
+        throw new BotError(undefined, "Member not in the clan anymore.");
     }
 
     return member;
@@ -111,24 +94,20 @@ function demote(context, coleader_id)
 
 async function update_participating(context)
 {
-    for (const [member_id, member] of context.state.members.entries())
-    {
-        const is_participating = member.balance >= context.state.required;
-
-        if (member.participating !== is_participating) 
+    await Promise
+        .all(...context.state.members.entries()
+        .map(async ([member_id, member]) => 
         {
-            try
+            const is_participating = member.balance >= context.state.required;
+
+            if (member.participating !== is_participating) 
             {
                 const body = { "participateInQuests": is_participating };
                 await put(`clans/${context.id}/members/${member_id}/participateInQuests`, body);
-                member.participating = is_participating;
+                
+                member.participating = is_participating;  
             }
-            catch(err)
-            {
-                throw new Error(`Failed to update participating status.\n"${err.message}`);
-            }   
-        }
-    }
+        }));
 
     context.storage.schedule_save();
 }

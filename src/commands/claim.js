@@ -1,6 +1,7 @@
 const {  post } = require('../api/requests');
 const { update_participating, update_balances } = require('../services/clan_manager');
 const { choose_quest } = require('../services/quest');
+const BotError = require('../utils/error');
 
 module.exports =
 {
@@ -20,13 +21,13 @@ module.exports =
         {
             is_gold = true;
         }
-        else if(type === "gems")
+        else if(type === "gems" || type === "gem")
         {
             is_gold = false;
         }
         else
         {
-            throw new Error("Input Error: Wrong argument.\nUndefined, gold and gems are accepted.");
+            throw new BotError("Argument is wrong. Gold, gem or gems are accepted.", "Input Error: Wrong argument.");
         }
 
         const winner = await choose_quest(context, is_gold);
@@ -34,19 +35,10 @@ module.exports =
 
         await update_participating(context);   // not critical even if post throws
 
-        let response;
-
-        try
-        {
-            response = await post(`clans/${context.id}/quests/claim`, { "questId": winner });
-        }
-        catch(err)
-        {
-            throw new Error(`Failed to claim quest.\n${err.message}`);
-        }
+        await post(`clans/${context.id}/quests/claim`, { "questId": winner });
 
         update_balances(context);  
 
-        return response;
+        return "Quest claimed successfully";
     }
 };

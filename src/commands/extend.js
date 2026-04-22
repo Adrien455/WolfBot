@@ -1,4 +1,5 @@
 const { post } = require('../api/requests');
+const BotError = require('../utils/error');
 
 module.exports =
 {
@@ -9,14 +10,8 @@ module.exports =
 
     async execute(context)
     {
-        try
-        {
-            return await post(`clans/${context.id}/quests/active/claimTime`);  
-        }
-        catch(err)
-        {
-            throw new Error(`Failed to claim additional time.\n${err.message}`);
-        }
-        
+        await post(`clans/${context.id}/quests/active/claimTime`);  
+
+        return "Time successfully extended";
     }
 };

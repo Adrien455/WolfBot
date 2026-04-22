@@ -1,4 +1,3 @@
-const { send_message } = require('../api/message');
 const { get_member} = require('../services/clan_manager');
 
 module.exports =
@@ -11,6 +10,7 @@ module.exports =
     async execute(context, member_id)
     {
         const member = get_member(context, member_id);
-        return await send_message(context, `Current savings : ${member.balance}`);
+        
+        return `Current savings : ${member.balance}`;
     }
 };

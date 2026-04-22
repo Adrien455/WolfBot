@@ -1,5 +1,3 @@
-const { send_message } = require('../api/message');
-
 module.exports =
 {
     name: "greet",
@@ -9,6 +7,6 @@ module.exports =
 
     async execute(context)
     {
-        return await send_message(context, "Beep Beep I'm a bot.");
+        return "Beep Beep I'm a bot.";
     }
 };

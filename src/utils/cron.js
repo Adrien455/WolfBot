@@ -9,7 +9,8 @@ class Cron
     {
         this.task = cron.schedule(every_monday, async () =>
         {     
-            await set_quests(context);
+            await set_quests(context)
+                .catch(err => console.log(err.message));
         },
         {
             timezone: 'UTC'

@@ -2,6 +2,7 @@ const superagent = require('superagent');
 const { API_KEY, BASE_URL } = require('../config');
 const { log_request, log_processed, log_errors } = require('../utils/monitoring');
 const sleep = require('../utils/sleep');
+const BotError = require('../utils/error');
 
 const MAX_RETRIES = 3;
 
@@ -81,7 +82,9 @@ async function request(method, endpoint, body)
 
             if(!retryable || attempts >= MAX_RETRIES)
             {
-                throw new Error(get_error_message(err));
+                const error = new BotError("Something went wrong", get_error_message(err), method + "/" + endpoint);
+                error.status = err.status;
+                throw error;
             }
 
             attempts++;

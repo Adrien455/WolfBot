@@ -1,4 +1,5 @@
 
+
 module.exports =
 {
     name: "stop",
@@ -9,6 +10,7 @@ module.exports =
     async execute(context)
     {
         context.running = false;
+        context.cron.stop();
         await context.storage.flush();
     }
 };

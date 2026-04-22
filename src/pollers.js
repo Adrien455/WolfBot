@@ -11,9 +11,18 @@ const PREFIX = "!";
 const POLL_MAX_DELAY = 5000;
 const POLL_MIN_DELAY = 500;
 
-function create_poller({fetch, get_date, set_last, handler, filter = () => true})
+class Poller
 {
-    return async function(context, last_date, _delay)
+    constructor({fetch, get_date, set_last, handler, filter = () => true})
+    {
+        this.fetch = fetch;
+        this.get_date = get_date;
+        this.set_last = set_last;
+        this.handler = handler;
+        this.filter = filter;
+    }
+
+    async run(context, last_date, _delay)
     {
         let last_seen_date = last_date;
         let delay = _delay;
@@ -24,19 +33,21 @@ function create_poller({fetch, get_date, set_last, handler, filter = () => true}
 
             try
             {
-                events = await fetch(context);
+                events = await this.fetch(context);
             }
             catch(err)
             {
-                console.log(err.message);
+                console.log(err.log_message);
+                console.log(err.url);
 
-                if(err.message.includes('Wrong api key or bot not added.'))
+                if(err.status === 401)
                 {
                     context.on_unauthorized();
                     return;
                 }
 
                 await sleep(delay);
+                delay = Math.min(delay + 300, POLL_MAX_DELAY);
                 continue;
             }
 
@@ -45,32 +56,44 @@ function create_poller({fetch, get_date, set_last, handler, filter = () => true}
             for(let i = events.length - 1; i >= 0; i--)
             {
                 const event = events[i];
-                const event_date = new Date(get_date(event));
+                const event_date = new Date(this.get_date(event));
 
                 if (event_date > last_seen_date)
                 {
                     activity = true;
                     last_seen_date = event_date;    // safe here in case of network error retype command
-                    set_last(context, event_date);
+                    this.set_last(context, event_date);
 
-                    if(filter(event))
+                    if(this.filter(event))
                     {
                         try
                         {
-                            await handler(context, event);
+                            let response = await this.handler(context, event);
+
+                            if(response)
+                            {
+                                console.log(response);
+                                await send_message(context, response);
+                            }
                         }
                         catch(err)
                         {
-                            
-                            console.log(err.message);
+                            //err.handle(context);
 
-                            try
+                            if(err.log_message)
                             {
-                                await send_message(context, err.message);
+                                console.log(err.log_message);
                             }
-                            catch(err)
+
+                            if(err.url)
                             {
-                                console.log(err.message);
+                                console.log(url);
+                            }
+
+                            if(err.message)
+                            {        
+                                await send_message(context, err.message)
+                                    .catch(err => console.log(err.log_message));
                             }
                         }
                     }
@@ -91,33 +114,33 @@ function create_poller({fetch, get_date, set_last, handler, filter = () => true}
     }
 }
 
-const messages_poller = create_poller({
+const messages_poller = new Poller({
     fetch: get_last_messages,
     get_date: (event) => event.date,
-    set_last: (date) => {},
+    set_last: (context, date) => {},
     handler: command_handler,
     filter: (event) => event.msg.startsWith(PREFIX)
 });
 
-const logs_poller = create_poller({
+const logs_poller = new Poller({
     fetch: (context) => get(`clans/${context.id}/logs`),
     get_date: (event) => event.creationTime,
     set_last: (context, date) => context.state.last_log_date = date,
     handler: log_handler
 });
 
-const ledger_poller = create_poller({
+const ledger_poller = new Poller({
     fetch: (context) => get(`clans/${context.id}/ledger`),
     get_date: (event) => event.creationTime,
     set_last: (context, date) => context.state.last_ledger_date = date,
     handler: ledger_handler
 });
 
-function run_pollers(context, starting_date)
+async function run_pollers(context, starting_date)
 {
-    messages_poller(context, starting_date, POLL_MIN_DELAY);
-    logs_poller(context, context.state.last_log_date, POLL_MIN_DELAY);
-    ledger_poller(context, context.state.last_ledger_date, POLL_MIN_DELAY);
+    messages_poller.run(context, starting_date, POLL_MIN_DELAY)
+    logs_poller.run(context, context.state.last_log_date, POLL_MIN_DELAY);
+    ledger_poller.run(context, context.state.last_ledger_date, POLL_MIN_DELAY);
 }
 
 module.exports = run_pollers;

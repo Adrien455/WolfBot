@@ -10,18 +10,10 @@ module.exports =
 
     async execute(context)
     {
-        let response;
-
-        try
-        {   
-            response = await post(`clans/${context.id}/quests/available/shuffle`);
-        }
-        catch(err)
-        {
-            throw new Error(`Failed to shuffle quests.\n${err.message}`);
-        }
-
+        await post(`clans/${context.id}/quests/available/shuffle`);
+        
         await set_quests(context);
-        return response;     
+
+        return "Quests shuffled successfully";
     }
 };

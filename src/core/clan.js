@@ -10,14 +10,14 @@ class Clan
     {
         this.id = id;
 
-        this.state = 
+        this.state =
         {
             last_log_date: null,
             last_ledger_date: null,
             required: null,
             members: null,
             quests: null
-        }
+        };
 
         this.storage = new Storage(this.state, id);
 
@@ -27,16 +27,17 @@ class Clan
             running: true,
             state: this.state,
             storage: this.storage,
-            on_unauthorized: remove
-        }
+            on_unauthorized: remove,
+        };
 
-        this.cron = new Cron(this.context)
+        this.cron = new Cron(this.context); // quests doesnt need cron
+        this.context.cron = this.cron;
     }
 
     async stop()
     {
         this.context.running = false;
-        this.cron.stop_cron();
+        this.cron.stop();
         await this.context.storage.flush();
     }
 
@@ -50,19 +51,16 @@ class Clan
         this.context.state.required = data.required ?? 500;
         this.context.state.members = data.members;
 
-        if(this.context.state.members.size == 0) await set_members(this.context);
+        if(this.context.state.members.size === 0) await set_members(this.context);
 
         await set_quests(this.context);
 
-        try
-        {
-            run_pollers(this.context, starting_date);
-        }
-        catch(err)
-        {
-            console.log(`Unhandled error.\n${err}`);
-            await this.stop();
-        };
+        run_pollers(this.context, starting_date)
+            .catch(async err => 
+            {
+                console.log(`Unhandled error.\n${err}`);
+                await this.stop();
+            });
     }
 }
 
