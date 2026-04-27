@@ -1,4 +1,4 @@
-const { init_clans, update, get_clans } = require('./src/core/clan_registry');
+const { update_clans, run_clans, get_clans } = require('./src/core/clan_registry');
 
 const { report } = require('./src/utils/monitoring');
 // setInterval(report, 10000).unref();
@@ -10,7 +10,7 @@ process.on('unhandledRejection', async (reason) =>
     await Promise
         .all(Array
             .from(clans.values(), clan => clan.stop()
-            .catch(err => console.log(`Failed to stop ${clan.id} clan.\n${error.message}`))));    // guard infinite recursion
+            .catch(err => console.log(`Failed to stop ${clan.id} clan.\n${err.message}`))));    // guard infinite recursion
 });
 
 const RELOAD_INTERVAL = 10 * 60 * 1000; // 10 minutes
@@ -18,24 +18,26 @@ const RELOAD_INTERVAL = 10 * 60 * 1000; // 10 minutes
 async function start()
 {
     
-    await init_clans()
+    await update_clans()    // init
         .catch(err => 
         {
-            console.log(`Critical error at start.\n${err?.log_message ?? err.message}`);
-            if(err.url) console.log(err.url);
+            console.log(`Critical error at start.\n${err.log_message ?? err.message}`);
             process.exit(1);
         });
+
+    run_clans();  // first run
 
     setInterval(() => 
     {
         console.log("Updating authorized clans ...");
 
-        update()
+    update()
             .catch(err => 
             {
-                console.log("Failed to update clans\n", err.log_message);
-                if(err.url) console.log(err.url);
+                console.log("Failed to update clans\n", err.log_message ?? err.message);
             });
+
+    run_clans();
 
     }, RELOAD_INTERVAL).unref();
 }

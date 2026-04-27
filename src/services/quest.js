@@ -1,5 +1,4 @@
 const { get } = require('../api/requests');
-const BotError = require('../utils/error');
 
 async function set_quests(context)
 {

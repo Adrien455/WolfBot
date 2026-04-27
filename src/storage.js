@@ -40,7 +40,7 @@ class Storage
                 return { required: 500, members: new Map() };
             }
         
-            throw new BotError(undefined, `Failed to load. Bad format: ${err.message}`);
+            throw new BotError({log_message: `Failed to load. Bad format: ${err.message}`});
         }
     }
 
@@ -51,7 +51,7 @@ class Storage
             try
             {
                 const body = {
-                    date: new Date(),
+                    save_date: new Date(),
                     last_log_date: this.state.last_log_date,
                     last_ledger_date: this.state.last_ledger_date,
                     required: this.state.required,

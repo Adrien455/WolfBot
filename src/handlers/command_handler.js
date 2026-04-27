@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const BotError = require('../utils/error');
 
 const { get_member } = require('../services/clan_manager');
 const { DEVS_IDS } = require('../config');
@@ -23,7 +24,10 @@ async function execute(context, command, player_id, args)    // checks perms
 {
     if (command.dev && !DEVS_IDS.includes(player_id))
     {
-        throw new Error("Auth Error:\nYou are not allowed to use this command");
+        throw new BotError({
+            message: "You are not allowed to use this command",
+            log_message: "Auth Error: Forbidden command."
+        });
     }
 
     if (command.strict)
@@ -32,7 +36,10 @@ async function execute(context, command, player_id, args)    // checks perms
 
         if(!member.coleader && !member.leader)
         {
-            throw new Error("Auth Error:\nYou are not allowed to use this command");
+            throw new BotError({
+                message: "You are not allowed to use this command",
+                log_message: "Auth Error: Forbidden command."
+            });
         }
     }
 
@@ -49,7 +56,10 @@ async function command_handler(context, message)
 
     if(!command)
     {
-        throw new Error("Input Error: Unknown command.")
+        throw new BotError({
+            message: "Unknown command.",
+            log_message: "Input Error: Wrong command."
+        })
     }
 
     return await execute(context, command, player_id, args);

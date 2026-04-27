@@ -17,7 +17,10 @@ module.exports =
         }
         catch(err)
         {
-            throw new BotError(undefined, `Failed to set members.\n${err.message}`);
+            throw new BotError({
+                message: "Something went wrong.",
+                log_message: `Failed to set members.\n${err.message}`
+            });
         }
 
         await set_quests(context);

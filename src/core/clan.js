@@ -6,7 +6,7 @@ const Cron = require('../utils/cron');
 
 class Clan
 {
-    constructor(id, remove)
+    constructor(id)
     {
         this.id = id;
 
@@ -23,44 +23,46 @@ class Clan
 
         this.context = 
         {
+            init_date: new Date(),
             id: this.id,
-            running: true,
+            running: false,
             state: this.state,
-            storage: this.storage,
-            on_unauthorized: remove,
+            storage: this.storage
         };
 
-        this.cron = new Cron(this.context); // quests doesnt need cron
+        this.cron = new Cron(this.context);
         this.context.cron = this.cron;
     }
 
-    async stop()
+    async init()
     {
-        this.context.running = false;
-        this.cron.stop();
-        await this.context.storage.flush();
-    }
+        console.log(`Initiating clan ${this.id} ...`);
 
-    async start()
-    {
         const data = await this.context.storage.load_data();
-        const starting_date = new Date();
 
-        this.context.state.last_log_date = data.last_log_date ? new Date(data.last_log_date) : starting_date;
-        this.context.state.last_ledger_date = data.last_ledger_date ? new Date(data.last_ledger_date) : starting_date;
+        this.context.state.last_log_date = data.last_log_date ? new Date(data.last_log_date) : this.context.init_date;
+        this.context.state.last_ledger_date = data.last_ledger_date ? new Date(data.last_ledger_date) : this.context.init_date;
         this.context.state.required = data.required ?? 500;
         this.context.state.members = data.members;
 
         if(this.context.state.members.size === 0) await set_members(this.context);
 
         await set_quests(this.context);
+    }
 
-        run_pollers(this.context, starting_date)
-            .catch(async err => 
-            {
-                console.log(`Unhandled error.\n${err}`);
-                await this.stop();
-            });
+    start()
+    {
+        console.log(`Starting clan ${this.id} ...`);
+        this.context.running = true;
+        return run_pollers(this.context);
+    }
+
+    async stop()
+    {
+        console.log(`Stopping clan ${this.id} ...`);
+        this.context.running = false;
+        this.cron.stop();
+        await this.context.storage.flush();
     }
 }
 

@@ -1,8 +1,5 @@
-const fs = require("fs");
-const { get } = require("../api/requests");
+const get_updated_clans = require('./clan_guard');
 const Clan = require('./clan');
-
-const FILE_PATH = "./src/clan_ids.json";
 
 const clans = new Map();
 
@@ -12,100 +9,61 @@ async function remove(id)
 
     if(clan)    // on_unauthorized may be called several times due to the three pollers
     {
-        await clan.stop();
+        console.log(`Removing clan ${id} ...`);
         clans.delete(id);
     }
 }
 
 async function add(id)
 {
-    const clan = new Clan(id, () => remove(id));
+    const clan = new Clan(id);
     clans.set(id, clan);
-    clan.start();
+    await clan.init();  // error callback will propagate
 }
 
-function diff(updated)
+async function update_clans()
 {
-    const added = [];
-    const removed = [];
+    const { added, removed } = await get_updated_clans(clans);
 
-    for(const id of updated)
+    for(const clan_id of added)
     {
-        if (!clans.has(id))
-        {
-            added.push(id);
-        }
+        await add(clan_id);
     }
 
-    for(const id of clans.keys())
+    for(const clan_id of removed)
     {
-        if (!updated.includes(id))
-        {
-            removed.push(id);
-        }
-    }
-
-  return { added, removed };
-}
-
-function load_clan_ids()
-{
-    try
-    {
-        const raw = fs.readFileSync(FILE_PATH, "utf-8");
-        const data = JSON.parse(raw);
-
-        return data.ids;
-    }
-    catch(err)
-    {
-        throw new Error(`Fail to load clan ids:\n${err.message}`);
+        remove(clan_id);
     }
 }
 
-async function update()
+async function run_clans()
 {
-    const added_clans = await get("clans/authorized");
-    const added_ids = added_clans.map((clan) => clan.id);
-
-    const allowed_ids = load_clan_ids();
-
-    const { added, removed } = diff(added_ids);
-
-    for(const id of added)
+    for(const clan_id of clans.keys())
     {
-        if(allowed_ids.includes(id))    // strict
+        const clan = clans.get(clan_id);
+
+        if(!clan.context.running)
         {
-            add(id);
+            clan.start().then(
+                async () =>
+                {
+                    await clan.stop();
+                },
+                async err => 
+                {
+                    console.log(`Error in clan ${clan_id}\n${err.log_message ?? err.message}`);
+                    await clan.stop();
+
+                    if(err.status === 401)
+                    {
+                        remove(clan_id);    // clan has removed the bot
+                    }
+                }
+            );
         }
     }
-
-    for(const id of removed)
-    {
-        remove(id); // not strict
-    }
-
-    console.log("Running clans:\n", clans.keys());
-}
-
-async function init_clans()
-{
-    const added_clans = await get("clans/authorized");
-    const added_ids = added_clans.map((clan) => clan.id);
-
-    const allowed_ids = load_clan_ids();  // security guard
-
-    for(const id of added_ids)
-    {
-        if(allowed_ids.includes(id))  // strict
-        {
-            add(id);
-        }
-    }
-
-    console.log(clans.keys());
 }
 
 const get_clans = () => clans;
 
-module.exports = { init_clans, update, get_clans };
+module.exports = { update_clans, run_clans, get_clans };

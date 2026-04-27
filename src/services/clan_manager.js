@@ -52,7 +52,7 @@ function get_member(context, member_id)
 
     if(!member) // very unlikely
     {
-        throw new BotError(undefined, "Member not in the clan anymore.");
+        throw new BotError({log_message: "Member not in the clan anymore."});
     }
 
     return member;
@@ -94,8 +94,8 @@ function demote(context, coleader_id)
 
 async function update_participating(context)
 {
-    await Promise
-        .all(...context.state.members.entries()
+    await Promise.all(
+        [...context.state.members.entries()]
         .map(async ([member_id, member]) => 
         {
             const is_participating = member.balance >= context.state.required;

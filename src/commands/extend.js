@@ -1,5 +1,4 @@
 const { post } = require('../api/requests');
-const BotError = require('../utils/error');
 
 module.exports =
 {

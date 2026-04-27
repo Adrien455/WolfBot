@@ -6,42 +6,52 @@ const BotError = require('../utils/error');
 
 const MAX_RETRIES = 3;
 
-function get_error_message(err)
+function get_error(err, url)
 {
     const status = err.status;
+    const error = new BotError({message: "Something went wrong.", status: status});
     log_errors();
 
-    switch(true)
+    if(status === 429)  // not tested
     {
-        case (status === 429):   // not tested
-            return `Rate limit reached: ${err.response?.body?.message ?? err.message}`;
-
-        case (status === 400):
-            return `Bad request: ${err.response?.body?.message}`;
-
-        case (status === 401):
-            return `Wrong api key or bot not added.\nAuth Error: ${err.message}`;
-
-        case (status === 403):   // not tested
-            return `Forbidden request: ${err.response?.body?.message ?? err.message}`;
-
-        case (status === 404):
-            return `HTTP Error: ${err.response?.body?.message}`;
-
-        case (status === 405):
-            return `Method not allowed: ${err.message}`;
-
-        case (status >= 500):
-            return `Server Error: ${err.response?.body?.message}`;
+        error.log_message = `Rate limit reached: ${err.response?.body?.message ?? err.message}`;
+    }
+    else if(status === 400)
+    {
+        error.log_message = `Bad request: ${err.response?.body?.message}\n${url}`;
+        error.message = err.response?.body?.message ?? error.message;   // useful for players
+    }
+    else if(status === 401)
+    {
+        error.log_message = `Wrong api key or bot not added.\nAuth Error: ${err.message}`;
+    }
+    else if(status === 403) // not tested
+    {
+        error.log_message = `Forbidden request: ${err.response?.body?.message ?? err.message}\n${url}`;
+    }
+    else if(status === 404)
+    {
+        error.log_message = `HTTP Error: ${err.response?.body?.message}\n${url}`;
+    }
+    else if(status === 405)
+    {
+        error.log_message = `Method not allowed: ${err.message}\n${url}`;
+    }
+    else if(status >= 500)
+    {
+        error.log_message = `Server Error: ${err.response?.body?.message}`;
+    }
+    else if(err.code)
+    {
+        error.log_message = `Network Error: ${err.code}`;
+    }
+    else
+    {
+        console.log(err);
+        error.log_message = `Unknown error: ${err.message}`;
     }
 
-    if(err.code)
-    {
-        return `Network Error: ${err.code}`;
-    }
-
-    console.log(err);
-    return `Unknown Error: ${err.message}`;
+    throw error;
 }
 
 async function request(method, endpoint, body)
@@ -82,13 +92,15 @@ async function request(method, endpoint, body)
 
             if(!retryable || attempts >= MAX_RETRIES)
             {
-                const error = new BotError("Something went wrong", get_error_message(err), method + "/" + endpoint);
-                error.status = err.status;
+                const url = method + "/" + endpoint;
+
+                const error = get_error(err, url);
                 throw error;
             }
 
             attempts++;
             console.log(`Retry ${attempts} after ${err.status ?? err.code} error.`);
+
             await sleep(delay);
             delay = Math.min(delay * 2, 10000);
         }

@@ -37,13 +37,9 @@ class Poller
             }
             catch(err)
             {
-                console.log(err.log_message);
-                console.log(err.url);
-
                 if(err.status === 401)
                 {
-                    context.on_unauthorized();
-                    return;
+                    throw err;  // means bot have been removed from this clan.
                 }
 
                 await sleep(delay);
@@ -72,28 +68,20 @@ class Poller
 
                             if(response)
                             {
-                                console.log(response);
                                 await send_message(context, response);
                             }
                         }
                         catch(err)
                         {
-                            //err.handle(context);
-
                             if(err.log_message)
                             {
                                 console.log(err.log_message);
                             }
 
-                            if(err.url)
-                            {
-                                console.log(url);
-                            }
-
                             if(err.message)
                             {        
                                 await send_message(context, err.message)
-                                    .catch(err => console.log(err.log_message));
+                                    .catch(err => console.log(err.log_message ?? err.message));
                             }
                         }
                     }
@@ -136,11 +124,16 @@ const ledger_poller = new Poller({
     handler: ledger_handler
 });
 
-async function run_pollers(context, starting_date)
+function run_pollers(context)
 {
-    messages_poller.run(context, starting_date, POLL_MIN_DELAY)
-    logs_poller.run(context, context.state.last_log_date, POLL_MIN_DELAY);
-    ledger_poller.run(context, context.state.last_ledger_date, POLL_MIN_DELAY);
+    // return first error / resolve
+    // handled by clan.registry in run_clans()
+    return Promise.race(
+    [
+        messages_poller.run(context, context.init_date, POLL_MIN_DELAY),
+        logs_poller.run(context, context.state.last_log_date, POLL_MIN_DELAY),
+        ledger_poller.run(context, context.state.last_ledger_date, POLL_MIN_DELAY),
+    ]);
 }
 
 module.exports = run_pollers;

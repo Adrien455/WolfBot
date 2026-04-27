@@ -27,11 +27,13 @@ module.exports =
         }
         else
         {
-            throw new BotError("Argument is wrong. Gold, gem or gems are accepted.", "Input Error: Wrong argument.");
+            throw new BotError({
+                message: "Argument is wrong. Gold, gem or gems are accepted.",
+                log_error: "Input Error: Wrong argument."
+            });
         }
 
         const winner = await choose_quest(context, is_gold);
-        console.log("Winner:", winner);
 
         await update_participating(context);   // not critical even if post throws
 
