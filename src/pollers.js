@@ -105,7 +105,7 @@ class Poller
 const messages_poller = new Poller({
     fetch: get_last_messages,
     get_date: (event) => event.date,
-    set_last: (context, date) => {},
+    set_last: (context, date) => {},    // not needed. Only logs and ledger are backtracked
     handler: command_handler,
     filter: (event) => event.msg.startsWith(PREFIX)
 });

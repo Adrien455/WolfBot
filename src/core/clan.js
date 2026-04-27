@@ -40,6 +40,7 @@ class Clan
 
         const data = await this.context.storage.load_data();
 
+        // tracks ledger / logs that occured when bot was offline after reactivation
         this.context.state.last_log_date = data.last_log_date ? new Date(data.last_log_date) : this.context.init_date;
         this.context.state.last_ledger_date = data.last_ledger_date ? new Date(data.last_ledger_date) : this.context.init_date;
         this.context.state.required = data.required ?? 500;

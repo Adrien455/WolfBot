@@ -9,11 +9,19 @@ const commands = new Map();
 
 function load_commands(dir)     // loads modules in specified directory and add them to commands
 {
-    const files = fs.readdirSync(path.join(__dirname, dir));
+    try
+    {
+        const files = fs.readdirSync(path.join(__dirname, dir));
 
-    for (const file of files) {
-        const cmd = require(`./${dir}/${file}`);
-        commands.set(cmd.name, cmd);
+        for (const file of files) {
+            const cmd = require(`./${dir}/${file}`);
+            commands.set(cmd.name, cmd);
+        }
+    }
+    catch(err)
+    {
+        console.log(`Error loading commands files.\n${err.message}`);
+        process.exit(1);
     }
 }
 

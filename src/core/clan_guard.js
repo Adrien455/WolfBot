@@ -50,11 +50,11 @@ async function get_updated_clans(original)
     const allowed = load_clan_ids();    // json
 
     const { added, removed } = diff(original, added_ids);
-    added.filter(clan => allowed.includes(clan));
+    const filtered = added.filter(clan => allowed.includes(clan));
     // json list takes precedence over the api ids
     // consider it as an additional security layer if you want full control over who uses the bot
 
-    return { added, removed };
+    return { added: filtered, removed };
 }
 
 module.exports = get_updated_clans;

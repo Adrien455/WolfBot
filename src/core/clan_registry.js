@@ -3,7 +3,7 @@ const Clan = require('./clan');
 
 const clans = new Map();
 
-async function remove(id)
+function remove(id)
 {
     const clan = clans.get(id);
 
@@ -17,8 +17,8 @@ async function remove(id)
 async function add(id)
 {
     const clan = new Clan(id);
+    await clan.init();  // error will propagate
     clans.set(id, clan);
-    await clan.init();  // error callback will propagate
 }
 
 async function update_clans()

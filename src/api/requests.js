@@ -10,7 +10,6 @@ function get_error(err, url)
 {
     const status = err.status;
     const error = new BotError({message: "Something went wrong.", status: status});
-    log_errors();
 
     if(status === 429)  // not tested
     {
@@ -84,6 +83,8 @@ async function request(method, endpoint, body)
         }
         catch(err)
         {
+            log_errors();
+            
             const retryable = err.status === 429
                 || err.status >= 500
                 || err.code === 'ETIMEDOUT'

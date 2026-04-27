@@ -8,7 +8,7 @@ async function get_last_messages(context)
 async function send_message(context, msg)
 {
     const body = { "message": msg };
-    return await post(`clans/${context.id}/chat`, body);
+    return await post(`clans/${context.id}/chat`, body);    // last 30 messages
 }
 
 module.exports = { get_last_messages, send_message };

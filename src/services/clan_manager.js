@@ -52,7 +52,7 @@ function get_member(context, member_id)
 
     if(!member) // very unlikely
     {
-        throw new BotError({log_message: "Member not in the clan anymore."});
+        throw new BotError({message: "Something went wrong.", log_message: "Member not in the clan anymore."});
     }
 
     return member;
@@ -125,7 +125,7 @@ function update_balances(context)
     context.storage.schedule_save();
 }
 
-function update_balance(context, member_id, amount)  // test only
+function update_balance(context, member_id, amount)
 {
     const member = get_member(context, member_id);
     member.balance += amount;

@@ -3,6 +3,7 @@ require('dotenv').config();
 const API_KEY = process.env.API_KEY;
 const BASE_URL = "https://api.wolvesville.com";
 
+// public ids
 const OWNER_ID = "b5e253a4-1478-47ac-85a1-bdb7c02a2c9c";    // owner of bot
 
 const DEVS_IDS = 
@@ -12,4 +13,13 @@ const DEVS_IDS =
     "a91aa913-a04e-486c-952a-a4bba99de723"
 ];
 
-module.exports = { API_KEY, BASE_URL, OWNER_ID, DEVS_IDS };
+function validate_config()
+{
+    if(!API_KEY)
+    {
+        console.log("Api key missing in .env file.");
+        process.exit(1);
+    }
+}
+
+module.exports = { API_KEY, BASE_URL, OWNER_ID, DEVS_IDS, validate_config };

@@ -1,3 +1,4 @@
+const { validate_config } = require('./src/config');
 const { update_clans, run_clans, get_clans } = require('./src/core/clan_registry');
 
 const { report } = require('./src/utils/monitoring');
@@ -16,8 +17,9 @@ process.on('unhandledRejection', async (reason) =>
 const RELOAD_INTERVAL = 10 * 60 * 1000; // 10 minutes
 
 async function start()
-{
-    
+{    
+    validate_config();
+
     await update_clans()    // init
         .catch(err => 
         {
@@ -29,13 +31,13 @@ async function start()
 
     setInterval(() => 
     {
-        console.log("Updating authorized clans ...");
+        console.log("Updating running clans ...");
 
-    update()
-            .catch(err => 
-            {
-                console.log("Failed to update clans\n", err.log_message ?? err.message);
-            });
+    update_clans()    // will restart clans that stopped normally
+        .catch(err => 
+        {
+            console.log("Failed to update clans\n", err.log_message ?? err.message);
+        });
 
     run_clans();
 
