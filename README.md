@@ -60,7 +60,7 @@ Set authorized clan ids in `clan_ids.json`:
 }
 ```
 
-This allows you to dynamically manage which clan can use your bot.<br>
+This allows you to dynamically manage which clan can use your bot, if you want to have full control over it.<br>
 Consider it as an additional security layer that takes precedence over the list given by the api.<br>
 Adding this bot to a clan in game is consequently not sufficient.<br>
 This file is reloaded every 10 minutes.
@@ -116,7 +116,7 @@ Restricted to players included in `DEVS_IDS`.
 
 - `!clear` → Clears cached quests and members.
 
-- `!stop` → Stops the bot. Data will be saved locally.
+- `!stop` → Stops the bot in this clan. Data will be saved locally.
 
 ## Notes
 
@@ -125,6 +125,8 @@ Restricted to players included in `DEVS_IDS`.
 - It relies on **polling** and continuously checks clan messages, clan logs and clan ledger.
 
 - Member data is continuously saved locally. When the bot starts, it loads any existing local data. Changes occuring during offline state / network shutdown are safely retrieved at restart / reconnection.
+
+- The instances of clans running are updated every 10 minutes. If the bot has stopped for whatever reason, you will need to wait at most 10 minutes for it to restart.
 
 ## Author
 

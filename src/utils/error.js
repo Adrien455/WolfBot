@@ -1,5 +1,3 @@
-
-
 class BotError extends Error
 {
     constructor({message, log_message, status})
